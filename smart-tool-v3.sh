@@ -794,9 +794,9 @@ function updateSmartTool() {
 	rm -rf /etc/smart-tool/smart-tool-v3.sh
 	echoContent skyBlue "开始下载： "
 	if wget --help | grep -q show-progress; then
-		wget -c -q --show-progress -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Shell/smart-tool-v3.sh"
+		wget -c -q --show-progress -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v3.sh"
   	else
-		wget -c -q -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Shell/smart-tool-v3.sh"
+		wget -c -q -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v3.sh"
 	fi
 
 	sudo chmod 700 /etc/smart-tool/smart-tool-v3.sh
@@ -4681,7 +4681,7 @@ function check_procs_status() {
 	fi 
 }
 
-SmartToolVersion=v0.349
+SmartToolVersion=v0.35
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
