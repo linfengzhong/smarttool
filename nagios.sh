@@ -181,6 +181,64 @@ function cleanScreen() {
 	clear
 }
 #-----------------------------------------------------------------------------#
+# 检查系统
+function checkSystem() {
+	if [[ -n $(find /etc -name "rocky-release") ]] || grep </proc/version -q -i "rockylinux"; then
+		mkdir -p /etc/yum.repos.d
+
+		if [[ -f "/etc/rocky-release" ]];then
+			centosVersion=$(rpm -q rocky-release | awk -F "[-]" '{print $3}' | awk -F "[.]" '{print $1}')
+
+			if [[ -z "${centosVersion}" ]] && grep </etc/rocky-release "version 8"; then
+				centosVersion=8
+			fi
+		fi
+		release="rocky"
+		installType='yum -y install'
+		removeType='yum -y remove'
+		upgrade="yum update -y --skip-broken"
+		echoContent white "Rocky Linux release 8.4 (Green Obsidian)"
+
+	elif [[ -n $(find /etc -name "redhat-release") ]] || grep </proc/version -q -i "centos"; then
+		mkdir -p /etc/yum.repos.d
+
+		if [[ -f "/etc/centos-release" ]];then
+			centosVersion=$(rpm -q centos-release | awk -F "[-]" '{print $3}' | awk -F "[.]" '{print $1}')
+
+		#	if [[ -z "${centosVersion}" ]] && grep </etc/centos-release "release 8"; then
+		#		centosVersion=8
+		#	fi
+		fi
+		release="centos"
+		installType='yum -y install'
+		removeType='yum -y remove'
+		upgrade="yum update -y --skip-broken"
+		echoContent white "CentOS 8.4"
+
+	elif grep </etc/issue -q -i "debian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "debian" && [[ -f "/proc/version" ]]; then
+		if grep </etc/issue -i "8"; then
+			debianVersion=8
+		fi
+		release="debian"
+		installType='apt -y install'
+		upgrade="apt update -y"
+		removeType='apt -y autoremove'
+
+	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
+		release="ubuntu"
+		installType='apt-get -y install'
+		upgrade="apt-get update -y"
+		removeType='apt-get --purge remove'
+	fi
+
+	if [[ -z ${release} ]]; then
+		echo "本脚本不支持此系统，请将下方日志反馈给开发者"
+		cat /etc/issue
+		cat /proc/version
+		exit 0
+	fi
+}
+#-----------------------------------------------------------------------------#
 # 安装 apache httpd
 function install_apache_httpd {
 	print_start "安装 apache httpd, 并设置端口：8080"
@@ -1602,7 +1660,7 @@ function nagios_menu() {
 	*)
 		print_error "请输入正确的数字"
 		sleep 1
-		menu
+		nagios_menu
 		;;
 	esac
 }
