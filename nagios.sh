@@ -181,6 +181,39 @@ function cleanScreen() {
 	clear
 }
 #-----------------------------------------------------------------------------#
+# 设置 current Host Domain 
+function set_current_host_domain {
+	print_start "设置 current Host Domain "
+	if [[ -f "$HOME/.myHostDomain" ]]; then
+		print_error "已经设置服务器域名，无需重复设置！"
+		currentHost=$(cat $HOME/.myHostDomain)
+	else
+		print_info "初始化 SmartTool v3 "
+		print_info "$HOME/.myHostDomain "
+		read -r -p "请设置服务器域名：" inputHostName
+			if [ $inputHostName ]; then
+				print_info "----- 服务器域名 ----"
+				print_error "${inputHostName}"
+				print_info "----- 服务器域名 ----"
+				echo "${inputHostName}" > $HOME/.myHostDomain
+			else
+				print_error "未输入域名，使用默认域名: ${defaultHost}"
+				print_info "----- 默认服务器域名 ----"
+				print_error "${defaultHost}"
+				print_info "----- 默认服务器域名 ----"
+				echo "${defaultHost}" > $HOME/.myHostDomain
+			fi
+		currentHost=$(cat $HOME/.myHostDomain)
+	fi
+	WORKDIR="/etc/fuckGFW/docker/${currentHost}/"
+	LOGDIR="/root/git/logserver/${currentHost}/"
+	print_complete "设置 current Host Domain "
+
+	hostnamectl set-hostname ${currentHost}
+	hostnamectl status
+
+}
+#-----------------------------------------------------------------------------#
 # 检查系统
 function checkSystem() {
 	if [[ -n $(find /etc -name "rocky-release") ]] || grep </proc/version -q -i "rockylinux"; then
@@ -1570,9 +1603,7 @@ function nagios_menu() {
 	echoContent green "Nagios.sh：\c"
 	echoContent white "${NagiosVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
-	echoContent green "logserver：\c"
-	echoContent white "https://github.com/linfengzhong/logserver"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
 	echoContent white "${currentHost}"
 	echoContent green "当前主机外部IP地址： \c" 
@@ -1667,4 +1698,5 @@ function nagios_menu() {
 NagiosVersion=v0.01
 cleanScreen
 inital_smart_tool $1
+set_current_host_domain
 nagios_menu
