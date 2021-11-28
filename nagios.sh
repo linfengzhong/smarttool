@@ -1,24 +1,22 @@
 #!/usr/bin/env bash
 #-----------------------------------------------------------------------------#
 # Author: Linfeng Zhong (Fred)
-# 2021-May-26 [Initial Version] - Shell Script for setup new server
-# 2021-June-25 [Add new functions] - Stop/Start docker-compose
-# 2021-July-09 [v3] - Remove non used functions
-# 2021-July-12 [logserver] - leverage logserver
+# 2021-Nov-28 [Initial Version] - Shell Script for Nagios server / client
 #-----------------------------------------------------------------------------#
 #================== RHEL 7/8 | CentOS 7/8 | Rocky Linux 8 ====================#
+#================== Debian | Armbian | Ubuntu | OpenWrt   ====================#
 #-----------------------------------------------------------------------------#
 # 初始化全局变量
 export LANG=en_US.UTF-8
 function inital_smart_tool() {
 	# default Host
-	defaultHost="k8s-master.cf"
+	defaultHost="pogo.dalian.ml"
 	# default UUID
 	defaultUUID="d8206743-b292-43d1-8200-5606238a5abb"
 	# default Nagios server ip
-	nagiosHostIP="104.199.212.122"
+	nagiosHostIP="192.168.1.10"
 	# 随机路径
-	customPath="rdxyzukwofngusfpmheud"
+	customPath="rfda1334sfpmhd"
 
 	# 自定义服务数组
 	# array_service_description=("Network" "CPU" "Disk usage" "Memory" "Total procedures" "SSH" "Service v2ray" "Service xray" "Service trojan.go" "Service nginx" "Service httpd" "Service v2-ui" "Service x-ui" "Service webmin" "Service docker" "Service nrpe" "Service node_exporter" "HTTPS" "Certificate" "TCP 5666" "TCP 7080" "TCP 8080" "TCP 8443" "TCP 9100" "TCP 10000" )
@@ -253,6 +251,15 @@ function checkSystem() {
 			debianVersion=8
 		fi
 		release="debian"
+		installType='apt -y install'
+		upgrade="apt update -y"
+		removeType='apt -y autoremove'
+
+	elif grep </etc/issue -q -i "Debian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "Debian" && [[ -f "/proc/version" ]]; then
+		if grep </etc/issue -i "8"; then
+			debianVersion=8
+		fi
+		release="Debian"
 		installType='apt -y install'
 		upgrade="apt update -y"
 		removeType='apt -y autoremove'
