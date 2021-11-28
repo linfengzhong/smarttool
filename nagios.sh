@@ -296,7 +296,7 @@ function checkSystem() {
 #-----------------------------------------------------------------------------#
 function install_apache_httpd {
 
-	if [ release = "rocky" ] || [ release = "centos" ] then
+	if [ release = "rocky" ] || [ release = "centos" ]; then
 
 		print_start "安装 apache httpd, 并设置端口：8080"
 		if [[ -d "/etc/httpd" ]]; then
