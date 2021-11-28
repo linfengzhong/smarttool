@@ -23,8 +23,11 @@ function inital_smart_tool() {
 	# array_service_description=("Network" "CPU" "Disk usage" "Memory" "Total procedures" "SSH" "Service v2ray" "Service xray" "Service trojan.go" "Service nginx" "Service httpd" "Service v2-ui" "Service x-ui" "Service webmin" "Service docker" "Service nrpe" "Service node_exporter" "HTTPS" "Certificate" "TCP 5666" "TCP 7080" "TCP 8080" "TCP 8443" "TCP 9100" "TCP 10000" )
 	# array_check_command=("check_eth" "check_cpu_stats" "check_disk" "check_mem" "check_total_procs" "check_ssh" "check_v2ray" "check_xray" "check_trojan.go" "check_nginx" "check_httpd" "check_v2_ui" "check_x_ui" "check_webmin" "check_docker" "check_nrpe" "check_node_exporter" "check_http" "check_certificate_expires" "check_port_5666" "check_port_7080" "check_port_8080" "check_port_8443" "check_port_9100" "check_port_10000" )
 
-	array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service webmin" "Service nrpe" "Service ncpa" "HTTP" "Certificate" "TCP 443 nginx xray" "TCP 5666 nrpe" "TCP 5693 ncpa" "TCP 9100 node exporter" "TCP 9999 webmin" "Service node exporter" "Total process" )
-	array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
+	# array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service webmin" "Service nrpe" "Service ncpa" "HTTP" "Certificate" "TCP 443 nginx xray" "TCP 5666 nrpe" "TCP 5693 ncpa" "TCP 9100 node exporter" "TCP 9999 webmin" "Service node exporter" "Total process" )
+	# array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
+
+    array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service ncpa" "Http" "Certificate" "TCP 443 nginx xray" "TCP 5693 ncpa" "Total process" )
+    array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5693" "check_ncpa_processes")
 
 	#定义变量
 	# WORKDIR="/root/git/toolbox/Docker/docker-compose/${currentHost}/"
@@ -106,6 +109,8 @@ function inital_smart_tool() {
 	else
 		currentUUID=${defaultUUID}
 	fi
+
+	release=
 }
 #-----------------------------------------------------------------------------#
 #打印Start
@@ -269,13 +274,13 @@ function checkSystem() {
 		upgrade="apt update -y"
 		removeType='apt -y autoremove'
 		echoContent white "debian"
-		echo "debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
 		installType='apt-get -y install'
 		upgrade="apt-get update -y"
 		removeType='apt-get --purge remove'
+		echoContent white "ubuntu"
 	fi
 
 	if [[ -z ${release} ]]; then
@@ -287,26 +292,53 @@ function checkSystem() {
 	fi
 }
 #-----------------------------------------------------------------------------#
-# 安装 apache httpd
+# 安装 apache - httpd | apache 2
 #-----------------------------------------------------------------------------#
 function install_apache_httpd {
-	print_start "安装 apache httpd, 并设置端口：8080"
-	if [[ -d "/etc/httpd" ]]; then
-		print_error "apache httpd已安装，无需重复操作！"
-	else
-		print_info "安装进行中ing "
-		yum -y install httpd >/dev/null 2>&1
-		# /etc/httpd/conf/httpd.conf
-		if cat /etc/httpd/conf/httpd.conf | grep "Listen 8080" ; then
-			print_error "已经设置端口：8080，无需重复设置！"
+
+	if [ release = "rocky" ] || [ release = "centos" ] then
+
+		print_start "安装 apache httpd, 并设置端口：8080"
+		if [[ -d "/etc/httpd" ]]; then
+			print_error "apache httpd已安装，无需重复操作！"
 		else
-			sed -i 's!Listen 80!Listen 8080!g' /etc/httpd/conf/httpd.conf
+			print_info "安装进行中ing "
+			yum -y install httpd >/dev/null 2>&1
+			# /etc/httpd/conf/httpd.conf
+			if cat /etc/httpd/conf/httpd.conf | grep "Listen 8080" ; then
+				print_error "已经设置端口：8080，无需重复设置！"
+			else
+				sed -i 's!Listen 80!Listen 8080!g' /etc/httpd/conf/httpd.conf
+			fi
+			# systemctl reload httpd
+			systemctl enable httpd
+			systemctl restart httpd
 		fi
-		# systemctl reload httpd
-		systemctl enable httpd
-		systemctl restart httpd
+		print_complete "安装 apache httpd, 并设置端口：8080"
+
+	else
+		print_start "安装 apache2, 并设置端口：8080"
+		if [[ -d "/etc/apache2" ]]; then
+			print_error "apache2 已安装，无需重复操作！"
+		else
+			print_info "安装进行中ing "
+			installType apache2 >/dev/null 2>&1
+			# /etc/apache2/apache2.conf
+			# /etc/apache2/sites-enabled/nagios.conf
+			# /etc/apache2/ports.conf
+			# /etc/apache2/sites-enabled/000-default.conf
+			if cat /etc/apache2/ports.conf | grep "Listen 8080" ; then
+				print_error "已经设置端口：8080，无需重复设置！"
+			else
+				sed -i 's!Listen 80!Listen 8080!g' /etc/apache2/ports.conf
+			fi
+			# systemctl reload httpd
+			systemctl enable apache2
+			systemctl restart apache2
+		fi
+		print_complete "安装 apache2, 并设置端口：8080"
 	fi
-	print_complete "安装 apache httpd, 并设置端口：8080"
+
 }
 #-----------------------------------------------------------------------------#
 # 激活 apache httpd SSL
