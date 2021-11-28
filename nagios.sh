@@ -263,6 +263,7 @@ function checkSystem() {
 		installType='apt -y install'
 		upgrade="apt update -y"
 		removeType='apt -y autoremove'
+		echoContent white "Debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
@@ -1698,7 +1699,6 @@ function nagios_menu() {
 	*)
 		print_error "请输入正确的数字"
 		sleep 1
-		nagios_menu
 		;;
 	esac
 }
