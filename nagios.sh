@@ -207,8 +207,14 @@ function set_current_host_domain {
 	LOGDIR="/root/git/logserver/${currentHost}/"
 	print_complete "设置 current Host Domain "
 
-	hostnamectl set-hostname ${currentHost}
-	hostnamectl status
+	if [[ -f "/usr/bin/hostnamectl" ]]; then 
+		hostnamectl set-hostname ${currentHost}
+		hostnamectl status
+	elif
+		rm -f /etc/hostname
+		echo "${currentHost}" > /etc/hostname
+		cat /etc/hostname
+	fi
 
 }
 #-----------------------------------------------------------------------------#
