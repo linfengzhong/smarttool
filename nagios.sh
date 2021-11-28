@@ -7,6 +7,7 @@
 #================== Debian | Armbian | Ubuntu | OpenWrt   ====================#
 #-----------------------------------------------------------------------------#
 # 初始化全局变量
+#-----------------------------------------------------------------------------#
 export LANG=en_US.UTF-8
 function inital_smart_tool() {
 	# default Host
@@ -108,31 +109,37 @@ function inital_smart_tool() {
 }
 #-----------------------------------------------------------------------------#
 #打印Start
+#-----------------------------------------------------------------------------#
 function print_start() {
 	echo -e "${Start} ${Blue} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
 #打印Info
+#-----------------------------------------------------------------------------#
 function print_info() {
 	echo -e "${Info} ${Blue}  $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
 #打印OK
+#-----------------------------------------------------------------------------#
 function print_ok() {
 	echo -e "${OK} ${Blue} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
 #打印Done
+#-----------------------------------------------------------------------------#
 function print_done() {
 	echo -e "${DONE} ${Blue}  $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
 #打印Error
+#-----------------------------------------------------------------------------#
 function print_error() {
 	echo -e "${ERROR} ${RedBG} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
 #判定 成功 or 失败
+#-----------------------------------------------------------------------------#
 function print_complete() {
 	if [[ 0 -eq $? ]]; then
 		print_done "$1" 
@@ -144,6 +151,7 @@ function print_complete() {
 }
 #-----------------------------------------------------------------------------#
 # 输出带颜色内容 字体颜色配置
+#-----------------------------------------------------------------------------#
 function echoContent() {
 	case $1 in
 		# 红色
@@ -175,11 +183,13 @@ function echoContent() {
 }
 #-----------------------------------------------------------------------------#
 # 清理屏幕
+#-----------------------------------------------------------------------------#
 function cleanScreen() {
 	clear
 }
 #-----------------------------------------------------------------------------#
 # 设置 current Host Domain 
+#-----------------------------------------------------------------------------#
 function set_current_host_domain {
 	print_start "设置 current Host Domain "
 	if [[ -f "$HOME/.myHostDomain" ]]; then
@@ -207,6 +217,7 @@ function set_current_host_domain {
 	LOGDIR="/root/git/logserver/${currentHost}/"
 	print_complete "设置 current Host Domain "
 
+# Change host name
 	if [[ -f "/usr/bin/hostnamectl" ]]; then 
 		hostnamectl set-hostname ${currentHost}
 		hostnamectl status
@@ -219,13 +230,12 @@ function set_current_host_domain {
 }
 #-----------------------------------------------------------------------------#
 # 检查系统
+#-----------------------------------------------------------------------------#
 function checkSystem() {
 	if [[ -n $(find /etc -name "rocky-release") ]] || grep </proc/version -q -i "rockylinux"; then
 		mkdir -p /etc/yum.repos.d
-
 		if [[ -f "/etc/rocky-release" ]];then
 			centosVersion=$(rpm -q rocky-release | awk -F "[-]" '{print $3}' | awk -F "[.]" '{print $1}')
-
 			if [[ -z "${centosVersion}" ]] && grep </etc/rocky-release "version 8"; then
 				centosVersion=8
 			fi
@@ -238,10 +248,8 @@ function checkSystem() {
 
 	elif [[ -n $(find /etc -name "redhat-release") ]] || grep </proc/version -q -i "centos"; then
 		mkdir -p /etc/yum.repos.d
-
 		if [[ -f "/etc/centos-release" ]];then
 			centosVersion=$(rpm -q centos-release | awk -F "[-]" '{print $3}' | awk -F "[.]" '{print $1}')
-
 		#	if [[ -z "${centosVersion}" ]] && grep </etc/centos-release "release 8"; then
 		#		centosVersion=8
 		#	fi
@@ -260,16 +268,8 @@ function checkSystem() {
 		installType='apt -y install'
 		upgrade="apt update -y"
 		removeType='apt -y autoremove'
-
-	elif grep </etc/issue -q -i "Debian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "Debian" && [[ -f "/proc/version" ]]; then
-		if grep </etc/issue -i "8"; then
-			debianVersion=8
-		fi
-		release="Debian"
-		installType='apt -y install'
-		upgrade="apt update -y"
-		removeType='apt -y autoremove'
-		echoContent white "Debian"
+		echoContent white "debian"
+		echo "debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
@@ -281,12 +281,14 @@ function checkSystem() {
 	if [[ -z ${release} ]]; then
 		echo "本脚本不支持此系统，请将下方日志反馈给开发者"
 		cat /etc/issue
+		cat /etc/os-release
 		cat /proc/version
 		exit 0
 	fi
 }
 #-----------------------------------------------------------------------------#
 # 安装 apache httpd
+#-----------------------------------------------------------------------------#
 function install_apache_httpd {
 	print_start "安装 apache httpd, 并设置端口：8080"
 	if [[ -d "/etc/httpd" ]]; then
