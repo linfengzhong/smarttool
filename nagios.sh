@@ -221,7 +221,7 @@ function set_current_host_domain {
 	if [[ -f "/usr/bin/hostnamectl" ]]; then 
 		hostnamectl set-hostname ${currentHost}
 		hostnamectl status
-	elif
+	else
 		rm -f /etc/hostname
 		echo "${currentHost}" > /etc/hostname
 		cat /etc/hostname
