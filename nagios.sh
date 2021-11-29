@@ -1710,8 +1710,6 @@ function nagios_menu() {
 		;;
 	6)
 		customize_nagios_server
-		sleep 1
-		nagios_menu
 		;;
 	7)
 		customize_nagios_client
