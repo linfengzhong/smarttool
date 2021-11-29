@@ -26,8 +26,8 @@ function inital_smart_tool() {
 	# array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service webmin" "Service nrpe" "Service ncpa" "HTTP" "Certificate" "TCP 443 nginx xray" "TCP 5666 nrpe" "TCP 5693 ncpa" "TCP 9100 node exporter" "TCP 9999 webmin" "Service node exporter" "Total process" )
 	# array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
 
-    array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service ncpa" "Http" "Certificate" "TCP 443 nginx xray" "TCP 5693 ncpa" "Total process" )
-    array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5693" "check_ncpa_processes")
+    array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service ncpa" "Http" "Https" )
+    array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" )
 
 	#定义变量
 	# WORKDIR="/root/git/toolbox/Docker/docker-compose/${currentHost}/"
@@ -1739,6 +1739,7 @@ function nagios_menu() {
 	*)
 		print_error "请输入正确的数字"
 		sleep 1
+		nagios_menu
 		;;
 	esac
 }
