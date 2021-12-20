@@ -64,7 +64,7 @@ function inital_smart_tool() {
 	echoType='echo -e'
 
 	# 初始化release
-	release
+	release=
 
 	# current Domain
 	currentHost=
