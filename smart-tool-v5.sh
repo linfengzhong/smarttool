@@ -269,7 +269,7 @@ EOF
 			wget https://download.webmin.com/jcameron-key.asc
 			apt-key add jcameron-key.asc
 
-			installType apt-transport-https 2>&1
+			installType apt-transport-https >/dev/null 2>&1
 		fi
 
 	fi
