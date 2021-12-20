@@ -513,10 +513,10 @@ function git_clone_smarttool () {
 			git clone git@github.com:linfengzhong/smarttool.git
 			print_complete "Git clone ToolBox "
 
-			echoContent green "同步下载 smart-tool-v3.sh 到根目录"
-			#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
-			cp -pf ${SmartToolDir}/smart-tool-v3.sh $HOME
-			chmod 700 $HOME/smart-tool-v3.sh
+			echoContent green "同步下载 smart-tool-v5.sh 到根目录"
+			#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v5.sh $HOME
+			cp -pf ${SmartToolDir}/smart-tool-v5.sh $HOME
+			chmod 700 $HOME/smart-tool-v5.sh
 			aliasInstall
 		fi
 	else
@@ -533,10 +533,10 @@ function github_pull_smarttool () {
 	sudo git pull
 	print_complete "下载 -> Local ToolBox Repo "
 
-	echoContent green "同步下载 smart-tool-v3.sh 到根目录"
-	#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
-	cp -pf ${SmartToolDir}/smart-tool-v3.sh $HOME
-	chmod 700 $HOME/smart-tool-v3.sh
+	echoContent green "同步下载 smart-tool-v5.sh 到根目录"
+	#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v5.sh $HOME
+	cp -pf ${SmartToolDir}/smart-tool-v5.sh $HOME
+	chmod 700 $HOME/smart-tool-v5.sh
 	aliasInstall
 }
 #-----------------------------------------------------------------------------#
@@ -774,7 +774,7 @@ function installCronTLS() {
 	echoContent skyBlue "添加定时维护证书"
 	crontab -l >/etc/fuckGFW/backup_crontab.cron
 	sed '/fuckGFW/d;/acme.sh/d' /etc/fuckGFW/backup_crontab.cron >/etc/fuckGFW/backup_crontab.cron
-	echo "30 1 * * * /bin/bash /etc/smart-tool/smart-tool-v3.sh RenewTLS" >>/etc/fuckGFW/backup_crontab.cron
+	echo "30 1 * * * /bin/bash /etc/smart-tool/smart-tool-v5.sh RenewTLS" >>/etc/fuckGFW/backup_crontab.cron
 	crontab /etc/fuckGFW/backup_crontab.cron
 	echoContent green "\n ---> 添加定时维护证书成功"
 }
@@ -786,16 +786,16 @@ function installCronTLS() {
 #-----------------------------------------------------------------------------#
 # 脚本快捷方式
 function aliasInstall() {
-	if [[ -f "$HOME/smart-tool-v3.sh" ]] && [[ -d "/etc/smart-tool" ]] && grep <$HOME/smart-tool-v3.sh -q "Author: Linfeng Zhong (Fred)"; then
-		mv "$HOME/smart-tool-v3.sh" /etc/smart-tool/smart-tool-v3.sh
+	if [[ -f "$HOME/smart-tool-v5.sh" ]] && [[ -d "/etc/smart-tool" ]] && grep <$HOME/smart-tool-v5.sh -q "Author: Linfeng Zhong (Fred)"; then
+		mv "$HOME/smart-tool-v5.sh" /etc/smart-tool/smart-tool-v5.sh
 		if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/st" ]]; then
-			ln -s /etc/smart-tool/smart-tool-v3.sh /usr/bin/st
+			ln -s /etc/smart-tool/smart-tool-v5.sh /usr/bin/st
 			chmod 700 /usr/bin/st
-			rm -rf "$HOME/smart-tool-v3.sh"
+			rm -rf "$HOME/smart-tool-v5.sh"
 		elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/st" ]]; then
-			ln -s /etc/smart-tool/smart-tool-v3.sh /usr/sbin/st
+			ln -s /etc/smart-tool/smart-tool-v5.sh /usr/sbin/st
 			chmod 700 /usr/sbin/st
-			rm -rf "$HOME/smart-tool-v3.sh"
+			rm -rf "$HOME/smart-tool-v5.sh"
 		fi
 	fi
 	echoContent green "快捷方式创建成功，可执行[st]重新打开脚本"
@@ -803,24 +803,24 @@ function aliasInstall() {
 #-----------------------------------------------------------------------------#
 # 更新脚本
 function updateSmartTool() {
-	rm -rf /etc/smart-tool/smart-tool-v3.sh
+	rm -rf /etc/smart-tool/smart-tool-v5.sh
 	echoContent skyBlue "开始下载： "
 	if wget --help | grep -q show-progress; then
-		wget -c -q --show-progress -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v3.sh"
+		wget -c -q --show-progress -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v5.sh"
   	else
-		wget -c -q -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v3.sh"
+		wget -c -q -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v5.sh"
 	fi
 
-	sudo chmod 700 /etc/smart-tool/smart-tool-v3.sh
-	local newversion=$(cat /etc/smart-tool/smart-tool-v3.sh | grep 'SmartToolVersion=v' | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
+	sudo chmod 700 /etc/smart-tool/smart-tool-v5.sh
+	local newversion=$(cat /etc/smart-tool/smart-tool-v5.sh | grep 'SmartToolVersion=v' | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
 
 	print_info "---> 更新完毕"
 	print_info "---> 当前版本:${newversion}"
 	print_info "---> 请手动执行[st]打开脚本\n"
 #	echoContent yellow "如更新不成功，请手动执行下面命令"
 #	echoContent skyBlue "wget -P /root -N --no-check-certificate\
-#  "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Shell/smart-tool-v3.sh" &&\
-#  chmod 700 /root/smart-tool-v3.sh && /root/smart-tool-v3.sh"
+#  "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Shell/smart-tool-v5.sh" &&\
+#  chmod 700 /root/smart-tool-v5.sh && /root/smart-tool-v5.sh"
 }
 #-----------------------------------------------------------------------------#
 # 初始化安装目录
@@ -1931,7 +1931,7 @@ function set_current_host_domain {
 		print_error "已经设置服务器域名，无需重复设置！"
 		currentHost=$(cat $HOME/.myHostDomain)
 	else
-		print_info "初始化 SmartTool v3 "
+		print_info "初始化 SmartTool v5 "
 		print_info "$HOME/.myHostDomain "
 		read -r -p "请设置服务器域名：" inputHostName
 			if [ $inputHostName ]; then
