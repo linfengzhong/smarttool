@@ -266,8 +266,8 @@ deb https://download.webmin.com/download/repository sarge contrib
 EOF
 			# install WebMin GPG key
 			cd /root
-			wget https://download.webmin.com/jcameron-key.asc
-			apt-key add jcameron-key.asc
+			wget -c -q --show-progress -P /root -N --no-check-certificate https://download.webmin.com/jcameron-key.asc
+			apt-key add jcameron-key.asc >/dev/null 2>&1
 
 			installType apt-transport-https >/dev/null 2>&1
 		fi
