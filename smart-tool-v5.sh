@@ -642,7 +642,6 @@ function checkSystem() {
 		installType='apt-get -y install'
 		upgrade="apt-get update -y"
 		removeType='apt-get --purge remove'
-	fi
 
 	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
 		release="armbian"
