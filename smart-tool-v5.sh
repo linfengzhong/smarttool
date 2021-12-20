@@ -269,11 +269,13 @@ EOF
 			wget -c -q --show-progress -P /root -N --no-check-certificate https://download.webmin.com/jcameron-key.asc
 			apt-key add jcameron-key.asc >/dev/null 2>&1
 
-			installType apt-transport-https >/dev/null 2>&1
+			# installType apt-transport-https >/dev/null 2>&1
+			installType apt-transport-https
 		fi
 
 		sleep 0.5
-		installType webmin >/dev/null 2>&1
+		# installType webmin >/dev/null 2>&1
+		installType webmin
 	fi
 
 	print_complete "Install webmin "
