@@ -248,7 +248,7 @@ function install_webmin () {
 		print_info "安装进行中ing "
 		# Redhat / CentOS / Rocky
 		# Webmin APT repository
-		if [[ release = "redhat" ]] || [[ release = "centos" ]] || [[ release = "rocky" ]]; then
+		if [[ release = "redhat" ]] || [[ release = "centos" ]] || [[ release = "rocky" ]] ; then
 			(echo "[Webmin]
 name=Webmin Distribution Neutral
 baseurl=http://download.webmin.com/download/yum
@@ -259,7 +259,7 @@ gpgkey=http://www.webmin.com/jcameron-key.asc" >/etc/yum.repos.d/webmin.repo;)
 
 		# Debian / Ubuntu / Armbian
 		# Webmin APT repository
-		if [[ release = "debian" ]] || [[ release = "ubuntu" ]] || [[ release = "armbian" ]]; then
+		if [[ release = "debian" ]] || [[ release = "ubuntu" ]] || [[ release = "armbian" ]] ; then
 			cat <<EOF >/etc/apt/sources.list
 # Webmin APT repository
 deb https://download.webmin.com/download/repository sarge contrib
