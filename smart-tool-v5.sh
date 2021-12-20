@@ -255,7 +255,7 @@ baseurl=http://download.webmin.com/download/yum
 enabled=1
 gpgcheck=1
 gpgkey=http://www.webmin.com/jcameron-key.asc" >/etc/yum.repos.d/webmin.repo;)
-		$upgrade
+		$upgrade >/dev/null 2>&1
 		fi
 
 		# Debian / Ubuntu / Armbian
@@ -267,10 +267,11 @@ deb https://download.webmin.com/download/repository sarge contrib
 EOF
 			# install WebMin GPG key
 			cd /root
+			print_info "下载GPG Key "
 			wget -c -q --show-progress -P /root -N --no-check-certificate https://download.webmin.com/jcameron-key.asc
 			apt-key add jcameron-key.asc >/dev/null 2>&1
 
-			$upgrade
+			$upgrade >/dev/null 2>&1
 			$installType apt-transport-https >/dev/null 2>&1
 		fi
 
