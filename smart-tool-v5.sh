@@ -270,12 +270,12 @@ EOF
 			apt-key add jcameron-key.asc >/dev/null 2>&1
 
 			# installType apt-transport-https >/dev/null 2>&1
-			installType apt-transport-https
+			$installType apt-transport-https
 		fi
 
 		sleep 0.5
 		# installType webmin >/dev/null 2>&1
-		installType webmin
+		$installType webmin
 	fi
 
 	print_complete "Install webmin "
