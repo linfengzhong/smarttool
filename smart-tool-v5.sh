@@ -187,7 +187,7 @@ function install_prerequisite () {
 		print_error "wget lsof tar unzip curl socat nmap bind-utils jq tree 已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "	
-		yum -y install wget lsof tar unzip curl socat nmap bind-utils jq tree >/dev/null 2>&1
+		installType wget lsof tar unzip curl socat nmap bind-utils jq tree >/dev/null 2>&1
 		mkdir -p /etc/fuckGFW/prerequisite
 		touch /etc/fuckGFW/prerequisite/check
 	#  install dig and nslookup --> bind-utils
@@ -217,13 +217,13 @@ function install_bpytop () {
 		print_error "bpytop已经安装，无需重复操作！"
 	else
 		print_start "Install Prerequisites for Python3 "
-		sudo yum -y install gcc libffi-devel python3-devel \
+		installType gcc libffi-devel python3-devel \
 						openssl-devel \
 						automake autoconf libtool make >/dev/null 2>&1
 		print_info "安装进行中ing "
 		print_complete "Install Prerequisites for Python3 "
 
-		sudo pip3 install bpytop --upgrade >/dev/null 2>&1
+		pip3 install bpytop --upgrade >/dev/null 2>&1
 		print_info "安装进行中ing "
 		print_complete "1/2 Install bpytop "
 
@@ -250,7 +250,7 @@ enabled=1
 gpgcheck=1
 gpgkey=http://www.webmin.com/jcameron-key.asc" >/etc/yum.repos.d/webmin.repo;)
 		sleep 0.5
-		sudo yum -y install webmin >/dev/null 2>&1
+		installType webmin >/dev/null 2>&1
 	fi
 	print_complete "Install webmin "
 }
