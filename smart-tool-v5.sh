@@ -61,8 +61,8 @@ function inital_smart_tool() {
 	installType=
 	removeType=
 	upgrade=
-	echoType=
-	
+	echoType='echo -e'
+
 	# 初始化release
 	release=
 
