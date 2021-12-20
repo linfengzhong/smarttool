@@ -272,9 +272,10 @@ EOF
 			installType apt-transport-https >/dev/null 2>&1
 		fi
 
-	fi
 		sleep 0.5
 		installType webmin >/dev/null 2>&1
+	fi
+
 	print_complete "Install webmin "
 }
 #-----------------------------------------------------------------------------#
