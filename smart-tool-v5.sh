@@ -5,18 +5,20 @@
 # 2021-June-25 [Add new functions] - Stop/Start docker-compose
 # 2021-July-09 [v3] - Remove non used functions
 # 2021-July-12 [logserver] - leverage logserver
+# 2021-December-20 [smarttool] - V5 version for Octopus 
 #-----------------------------------------------------------------------------#
 #================== RHEL 7/8 | CentOS 7/8 | Rocky Linux 8 ====================#
+#================== Debian | Ubuntu | Armbian ================================#
 #-----------------------------------------------------------------------------#
 # 初始化全局变量
 export LANG=en_US.UTF-8
 function inital_smart_tool() {
 	# default Host
-	defaultHost="k8s-master.cf"
+	defaultHost="octopus.dalian.ml"
 	# default UUID
 	defaultUUID="d8206743-b292-43d1-8200-5606238a5abb"
 	# default Nagios server ip
-	nagiosHostIP="104.199.212.122"
+	nagiosHostIP="127.0.0.1"
 	# 随机路径
 	customPath="rdxyzukwofngusfpmheud"
 
@@ -28,11 +30,11 @@ function inital_smart_tool() {
 	array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
 
 	#定义变量
-	# WORKDIR="/root/git/toolbox/Docker/docker-compose/${currentHost}/"
-	SmartToolDir="/root/git/toolbox/Shell"
+	# WORKDIR="/root/git/smarttool/Docker/docker-compose/${currentHost}/"
+	SmartToolDir="/root/git/smarttool"
 	# WORKDIR="/etc/fuckGFW/docker/${currentHost}/"
 	# LOGDIR="/root/git/logserver/${currentHost}/"
-	GITHUB_REPO_TOOLBOX="/root/git/toolbox"
+	GITHUB_REPO_TOOLBOX="/root/git/smarttool"
 	GITHUB_REPO_LOGSERVER="/root/git/logserver"
 	EMAIL="fred.zhong@outlook.com"
 	myDate=date
@@ -55,6 +57,7 @@ function inital_smart_tool() {
 	Error="${Red}[ERROR错误]${Font}"
 	DONE="${Green}[Done完成]${Font}"
 	
+	# 初始化为Redhat, CentOS风格
 	installType='yum -y install'
 	removeType='yum -y remove'
 	upgrade="yum -y update"
@@ -485,13 +488,13 @@ function git_init () {
 	
 		read -r -p "将上面的 Public Key 输入到您的 GitHub 账户[y/n]: " answer_y_n
 		if [[ "${answer_y_n}" == "y" ]]; then
-			git_clone_toolbox
+			git_clone_smarttool
 			git_clone_logserver
 
-			github_pull_toolbox
+			github_pull_smarttool
 			github_pull_logserver
 
-			github_push_toolbox
+			github_push_smarttool
 			github_push_logserver
 		else
 			print_error "请设置好GitHub后，再继续进行！"
@@ -499,19 +502,19 @@ function git_init () {
 	fi
 }
 #-----------------------------------------------------------------------------#
-# Git clone toolbox.git
-function git_clone_toolbox () {
+# Git clone smarttool.git
+function git_clone_smarttool () {
 	print_start "Git clone ToolBox "
 	if [[ -d "$HOME/git/" ]];then
-		if [[ -d "$HOME/git/toolbox" ]];then
-			print_error "toolbox文件夹已存在，无需重新clone！"
+		if [[ -d "$HOME/git/smarttool" ]];then
+			print_error "smarttool文件夹已存在，无需重新clone！"
 		else
 			cd  $HOME/git/
-			git clone git@github.com:linfengzhong/toolbox.git
+			git clone git@github.com:linfengzhong/smarttool.git
 			print_complete "Git clone ToolBox "
 
 			echoContent green "同步下载 smart-tool-v3.sh 到根目录"
-			#cp -pf $HOME/git/toolbox/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
+			#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
 			cp -pf ${SmartToolDir}/smart-tool-v3.sh $HOME
 			chmod 700 $HOME/smart-tool-v3.sh
 			aliasInstall
@@ -523,7 +526,7 @@ function git_clone_toolbox () {
 }
 #-----------------------------------------------------------------------------#
 # 同步下载Git文件夹
-function github_pull_toolbox () {
+function github_pull_smarttool () {
 	echoContent yellow " ---> ToolBox"
 	print_start "下载 -> Local ToolBox Repo "
 	cd $GITHUB_REPO_TOOLBOX
@@ -531,14 +534,14 @@ function github_pull_toolbox () {
 	print_complete "下载 -> Local ToolBox Repo "
 
 	echoContent green "同步下载 smart-tool-v3.sh 到根目录"
-	#cp -pf $HOME/git/toolbox/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
+	#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v3.sh $HOME
 	cp -pf ${SmartToolDir}/smart-tool-v3.sh $HOME
 	chmod 700 $HOME/smart-tool-v3.sh
 	aliasInstall
 }
 #-----------------------------------------------------------------------------#
 # 同步上传Git文件夹
-function github_push_toolbox () {
+function github_push_smarttool () {
 	echoContent yellow " ---> ToolBox"
 	print_start "上传ToolBox -> GitHub "
 	cd $GITHUB_REPO_TOOLBOX
@@ -636,6 +639,13 @@ function checkSystem() {
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
+		installType='apt-get -y install'
+		upgrade="apt-get update -y"
+		removeType='apt-get --purge remove'
+	fi
+
+	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
+		release="armbian"
 		installType='apt-get -y install'
 		upgrade="apt-get update -y"
 		removeType='apt-get --purge remove'
@@ -807,7 +817,7 @@ function updateSmartTool() {
 	print_info "---> 请手动执行[st]打开脚本\n"
 #	echoContent yellow "如更新不成功，请手动执行下面命令"
 #	echoContent skyBlue "wget -P /root -N --no-check-certificate\
-#  "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Shell/smart-tool-v3.sh" &&\
+#  "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Shell/smart-tool-v3.sh" &&\
 #  chmod 700 /root/smart-tool-v3.sh && /root/smart-tool-v3.sh"
 }
 #-----------------------------------------------------------------------------#
@@ -1781,12 +1791,12 @@ function show_access_log_xray {
 # Website
 function generate_fake_website {
 #	/etc/fuckGFW/website
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html1.zip
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html2.zip
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html3.zip
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html4.zip
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html5.zip
-#	https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html5.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html1.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html2.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html3.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html4.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html5.zip
+#	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html5.zip
 	print_start "添加随机伪装站点 "
 	if [[ -d "/etc/fuckGFW/website/html" && -f "/etc/fuckGFW/website/html/check" ]]; then
 		echo
@@ -1794,7 +1804,7 @@ function generate_fake_website {
 		if [[ "${nginxBlogInstallStatus}" == "y" ]]; then
 			rm -rf /etc/fuckGFW/website/html
 			randomNum=$((RANDOM%6+1))
-			wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html${randomNum}.zip >/dev/null
+			wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
 			unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html >/dev/null
 			rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 			echoContent green " ---> 添加伪装站点成功"
@@ -1802,7 +1812,7 @@ function generate_fake_website {
 	else
 		randomNum=$((RANDOM%6+1))
 		rm -rf /etc/fuckGFW/website/html
-		wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/toolbox/main/Website/html${randomNum}.zip >/dev/null
+		wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
 		unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html >/dev/null
 		rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 		echoContent green " ---> 添加伪装站点成功"
@@ -3343,7 +3353,7 @@ function customize_nagios_client_copy_libexec {
 		chmod 755 /usr/local/nagios/libexec/*
 		chmod 755 /usr/local/nagios/libexec/*.*
 	else
-		print_error "请先Git同步toolbox到本地，再进行设置！"
+		print_error "请先Git同步smarttool到本地，再进行设置！"
 		print_error "Plan B: wget 文件到Libexec"
 		
 #		rm -f /usr/local/nagios/libexec/check_cpu_stats.sh
@@ -3355,21 +3365,21 @@ function customize_nagios_client_copy_libexec {
 #		rm -f /usr/local/nagios/libexec/check_netinterfaces
 #		rm -f /usr/local/nagios/libexec/check_eth
 
-		wget -c -q -P /tmp/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec.zip"	
+		wget -c -q -P /tmp/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec.zip"	
 		unzip -o /tmp/Libexec.zip -d /tmp/ >/dev/null
 		mv -f /tmp/Libexec/* /usr/local/nagios/libexec/
 		
 		rm -f /tmp/Libexec.zip
 		rm -rf /tmp/Libexec/ 
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_cpu_stats.sh"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_kernel"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_mem.pl"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_mem"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_service.sh"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_ssl_certificate"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_ssl_cert_expiry"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_netinterfaces"
-#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_eth"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_cpu_stats.sh"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_kernel"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_mem.pl"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_mem"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_service.sh"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_ssl_certificate"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_ssl_cert_expiry"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_netinterfaces"
+#		wget -c -q -P /usr/local/nagios/libexec/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/Libexec/check_eth"
 
 		chmod 755 /usr/local/nagios/libexec/*
 		chmod 755 /usr/local/nagios/libexec/*.*
@@ -3408,14 +3418,14 @@ function enable_nagios_dark_mode {
 	rm -rf /usr/local/nagios/share/stylesheets
 	rm -f /usr/local/nagios/share/index.php
 
-	if [[ -d "/root/git/toolbox/Nagios/nagios4-dark-theme-master/stylesheets" ]] ; then
-		cp -rpf /root/git/toolbox/Nagios/nagios4-dark-theme-master/stylesheets /usr/local/nagios/share/
-		cp -pf /root/git/toolbox/Nagios/nagios4-dark-theme-master/index.php /usr/local/nagios/share/index.php
+	if [[ -d "/root/git/smarttool/Nagios/nagios4-dark-theme-master/stylesheets" ]] ; then
+		cp -rpf /root/git/smarttool/Nagios/nagios4-dark-theme-master/stylesheets /usr/local/nagios/share/
+		cp -pf /root/git/smarttool/Nagios/nagios4-dark-theme-master/index.php /usr/local/nagios/share/index.php
 	else
 		print_error "Git未安装或未同步，执行Plan B"
 		mkdir -p /usr/local/nagios/share/stylesheets
-		wget -c -q -P /usr/local/nagios/share/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/nagios4-dark-theme-master/stylesheets.zip"
-		wget -c -q -P /usr/local/nagios/share/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/nagios4-dark-theme-master/index.php"
+		wget -c -q -P /usr/local/nagios/share/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/nagios4-dark-theme-master/stylesheets.zip"
+		wget -c -q -P /usr/local/nagios/share/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/Nagios/nagios4-dark-theme-master/index.php"
 		unzip -o /usr/local/nagios/share/stylesheets.zip -d /usr/local/nagios/share/ >/dev/null
 		rm -f /usr/local/nagios/share/stylesheets.zip
 	fi
@@ -3896,7 +3906,7 @@ function install_other_software_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -3946,7 +3956,7 @@ function grafana_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4010,7 +4020,7 @@ function webmin_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4065,7 +4075,7 @@ function nagios_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4168,7 +4178,7 @@ function kxsw_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4229,7 +4239,7 @@ function generate_conf_log_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4327,7 +4337,7 @@ function log_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4388,7 +4398,7 @@ function conf_menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4448,7 +4458,7 @@ function menu() {
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
-	echoContent white "https://github.com/linfengzhong/toolbox"
+	echoContent white "https://github.com/linfengzhong/smarttool"
 	echoContent green "logserver：\c"
 	echoContent white "https://github.com/linfengzhong/logserver"
 	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
@@ -4559,17 +4569,17 @@ function menu() {
 		st
 		;;
 	21)
-		git_clone_toolbox
+		git_clone_smarttool
 		git_clone_logserver
 		;;
 	22)
-		github_pull_toolbox
+		github_pull_smarttool
 		github_pull_logserver
 		sleep 2
 		st
 		;;
 	23)
-		github_push_toolbox
+		github_push_smarttool
 		github_push_logserver
 		sleep 2
 		st
@@ -4588,7 +4598,7 @@ function menu() {
 		install_docker_compose
 		generate_docker_compose_yml
 		docker_compose_down
-		github_pull_toolbox
+		github_pull_smarttool
 		github_pull_logserver
 		generate_docker_compose_yml
 		renewalTLS
@@ -4600,7 +4610,7 @@ function menu() {
 		generate_grafana_ini
 		generate_access_log_error_log
 		generate_fake_website
-		github_push_toolbox
+		github_push_smarttool
 		github_push_logserver
 		docker_compose_up
 		;;
