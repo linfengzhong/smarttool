@@ -272,10 +272,12 @@ EOF
 			apt-key add jcameron-key.asc >/dev/null 2>&1
 
 			$upgrade >/dev/null 2>&1
+			print_info "安装 apt-transport-https "
 			$installType apt-transport-https >/dev/null 2>&1
 		fi
 
 		sleep 0.5
+		print_info "安装 Webmin "
 		$installType webmin >/dev/null 2>&1
 	fi
 
