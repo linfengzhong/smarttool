@@ -636,18 +636,21 @@ function checkSystem() {
 		installType='apt -y install'
 		upgrade="apt update -y"
 		removeType='apt -y autoremove'
+        echoContent white "Debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
 		installType='apt-get -y install'
 		upgrade="apt-get update -y"
 		removeType='apt-get --purge remove'
+		echoContent white "Ubuntu"		
 
 	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
 		release="armbian"
 		installType='apt-get -y install'
 		upgrade="apt-get update -y"
 		removeType='apt-get --purge remove'
+		echoContent white "Armbian"
 	fi
 
 	if [[ -z ${release} ]]; then
