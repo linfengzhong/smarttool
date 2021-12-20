@@ -58,11 +58,11 @@ function inital_smart_tool() {
 	DONE="${Green}[Done完成]${Font}"
 	
 	# 初始化为Redhat, CentOS风格
-	installType='yum -y install'
-	removeType='yum -y remove'
-	upgrade="yum -y update"
-	echoType='echo -e'
-
+	installType=
+	removeType=
+	upgrade=
+	echoType=
+	
 	# 初始化release
 	release=
 
