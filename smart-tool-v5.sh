@@ -63,6 +63,9 @@ function inital_smart_tool() {
 	upgrade="yum -y update"
 	echoType='echo -e'
 
+	# 初始化release
+	release
+
 	# current Domain
 	currentHost=
 	# UUID
@@ -243,15 +246,35 @@ function install_webmin () {
 		print_error "Webmin已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "
-		(echo "[Webmin]
+		# Redhat / CentOS / Rocky
+		# Webmin APT repository
+		if [[ release = "redhat" ]] || [[ release = "centos" ]] || [[ release = "rocky" ]]; then
+			(echo "[Webmin]
 name=Webmin Distribution Neutral
 baseurl=http://download.webmin.com/download/yum
 enabled=1
 gpgcheck=1
 gpgkey=http://www.webmin.com/jcameron-key.asc" >/etc/yum.repos.d/webmin.repo;)
+		fi
+
+		# Debian / Ubuntu / Armbian
+		# Webmin APT repository
+		if [[ release = "debian" ]] || [[ release = "ubuntu" ]] || [[ release = "armbian" ]]; then
+			cat <<EOF >/etc/apt/sources.list
+# Webmin APT repository
+deb https://download.webmin.com/download/repository sarge contrib
+EOF
+			# install WebMin GPG key
+			cd /root
+			wget https://download.webmin.com/jcameron-key.asc
+			apt-key add jcameron-key.asc
+
+			installType apt-transport-https 2>&1
+		fi
+
+	fi
 		sleep 0.5
 		installType webmin >/dev/null 2>&1
-	fi
 	print_complete "Install webmin "
 }
 #-----------------------------------------------------------------------------#
