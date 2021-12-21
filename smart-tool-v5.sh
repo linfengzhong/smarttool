@@ -3992,11 +3992,14 @@ function uninstall_exec_node_exporter_linux {
 	print_start "卸载 Node Exporter linux 版本 "
 
 	if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
-		$removeType node_exporter >/dev/null 2>&1
+		print_info "Redhat / CentOS / Rocky Linux version"
+		$removeType node_exporter
 	fi
 	
+	#  >/dev/null 2>&1
 	if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
-		$removeType prometheus-node-exporter >/dev/null 2>&1
+		print_info "Debian / Ubuntu / Armbian version"
+		$removeType prometheus-node-exporter
 	fi
 	
 	print_complete "卸载 Node Exporter linux 版本 "
@@ -4120,7 +4123,7 @@ function git_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 安装其他软件菜单
-function install_other_software_menu() {
+function install_standalone_software_menu() {
 	clear
 	cd "$HOME" || exit
 	echoContent red "=================================================================="
@@ -4792,7 +4795,7 @@ function menu() {
 		git_menu
 		;;
 	26)
-		install_other_software_menu
+		install_standalone_software_menu
 		;;
 	30)
 		print_error "Docker 映射端口 7080 & 7443"
