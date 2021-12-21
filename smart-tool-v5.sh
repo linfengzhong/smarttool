@@ -335,8 +335,8 @@ function install_docker () {
 		
 		print_info "安装进行中ing "
 		$installType docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
-		sudo systemctl start docker
-		sudo systemctl enable docker
+		#sudo systemctl start docker
+		#sudo systemctl enable docker
 		print_complete "3/3 Install Docker Engine "
 	fi
 	print_complete "Install Docker CE "
@@ -350,7 +350,7 @@ function install_docker_compose () {
 		print_error "docker compose已经安装，无需重复操作！"
 	else
 		print_info "docker-compose 2.2.2"
-		sudo curl -L "https://github.com/docker/compose/releases/download/2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
+		sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
 		docker-compose --version
