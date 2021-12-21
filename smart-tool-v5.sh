@@ -4585,13 +4585,13 @@ function menu() {
 	echoContent yellow "42.docker one key - lite"
 	echoContent yellow "31.docker-compose up ｜ 32.docker-compose down"
 	echoContent yellow "33.docker status"
+	echoContent yellow "38.安装 docker CE & docker compose"
+	echoContent yellow "39.卸载 docker CE & docker compose"
 	echoContent skyBlue "------------------------------------------------------------------"
 	echoContent yellow "34.generate conf & logs [Sub Menu]"
 	echoContent yellow "35.show configs [Sub Menu]"
 	echoContent yellow "36.show logs [Sub Menu]"
 	echoContent yellow "37.show account"
-	echoContent yellow "38.安装 docker CE & docker compose"
-	echoContent yellow "39.卸载 docker CE & docker compose"
 	echoContent skyBlue "---------------------------证书管理-------------------------------"
 	echoContent yellow "40.CA one key | 41.generate CA "
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
@@ -4791,7 +4791,7 @@ function check_procs_status() {
 	fi 
 }
 
-SmartToolVersion=v0.35
+SmartToolVersion=v0.36
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
