@@ -483,7 +483,7 @@ function install_apache_httpd {
 	fi
 
 	if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
-
+			print_info "安装进行中ing "
 	fi
 
 
