@@ -1936,7 +1936,34 @@ function restart_webmin_service {
 	#systemctl status webmin
 	print_complete "重启 webmin.service "
 }
+#-----------------------------------------------------------------------------#
+# 重启 webmin 服务
+function uninstall_webmin {
+	print_info "卸载 webmin "
 
+	if [[ -d "/etc/webmin" ]]; then
+		print_error "开始卸载Webmin "
+		# Redhat / CentOS / Rocky
+		# Webmin APT repository
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			rm /etc/yum.repos.d/webmin.repo >/dev/null 2>&1
+		fi
+
+		# Debian / Ubuntu / Armbian
+		# Webmin APT repository
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			# install WebMin GPG key
+			print_info "删除GPG Key "
+			rm /root/jcameron-key.asc >/dev/null 2>&1
+		fi
+		print_info "卸载 Webmin "
+		$removeType webmin >/dev/null 2>&1
+	else
+		print_error "未检测到Webmin! "
+	fi
+
+	print_complete "卸载 webmin "
+}
 #-----------------------------------------------------------------------------#
 # 清理域名
 function clear_myHostDomain {
@@ -4070,6 +4097,7 @@ function webmin_menu() {
 	echoContent yellow "2.激活 webmin SSL "
 	echoContent yellow "3.修改 webmin port: 9999 "
 	echoContent yellow "4.重启 webmin service "
+	echoContent yellow "5.卸载 webmin "
 	echoContent red "=================================================================="
 	read -r -p "Please choose the function (请选择) : " selectInstallType
 	case ${selectInstallType} in
@@ -4090,6 +4118,9 @@ function webmin_menu() {
 		;;
 	4)
 		restart_webmin_service
+		;;
+	5）
+		uninstall_webmin
 		;;
 	*)
 		print_error "请输入正确的数字"
