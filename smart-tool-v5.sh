@@ -190,10 +190,10 @@ function install_prerequisite () {
 		print_error "wget lsof tar unzip curl socat nmap bind-utils jq tree 已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "	
-		$installType wget lsof tar unzip curl socat nmap bind-utils jq tree >/dev/null 2>&1
+		$installType wget lsof tar unzip curl socat bind-utils jq >/dev/null 2>&1
+		$installType sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop >/dev/null 2>&1
 		mkdir -p /etc/fuckGFW/prerequisite
 		touch /etc/fuckGFW/prerequisite/check
-	#  install dig and nslookup --> bind-utils
 	fi
 	print_complete "安装 wget lsof tar unzip curl socat nmap bind-utils jq tree "
 }
