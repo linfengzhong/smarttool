@@ -3950,24 +3950,37 @@ function install_exec_node_exporter_linux {
 			curl -Lo /etc/yum.repos.d/_copr_ibotty-prometheus-exporters.repo https://copr.fedorainfracloud.org/coprs/ibotty/prometheus-exporters/repo/epel-8/ibotty-prometheus-exporters-epel-8.repo
 			
 			print_info "Step 2: 安装 node_exporter"
-			$installType node_exporter
+			$installType node_exporter >/dev/null 2>&1
+
+			print_info "Step 3: Enable and restart node_exporter service"
+			
+			print_info "Step 3-1: 重新加载daemon-reload"
+			systemctl daemon-reload
+			
+			print_info "Step 3-2: Enable node_exporter服务"
+			systemctl enable node_exporter
+			
+			print_info "Step 3-3: Restart node_exporter服务"
+			systemctl restart node_exporter
 		fi
 
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
 			print_info "Step 2: 安装 prometheus-node-exporter"
-			$installType prometheus-node-exporter
+			$installType prometheus-node-exporter >/dev/null 2>&1
+
+			print_info "Step 3: Enable and restart node_exporter service"
+			
+			print_info "Step 3-1: 重新加载daemon-reload"
+			systemctl daemon-reload
+			
+			print_info "Step 3-2: Enable node_exporter服务"
+			systemctl enable prometheus-node-exporter.service
+			
+			print_info "Step 3-3: Restart node_exporter服务"
+			systemctl restart prometheus-node-exporter.service
 		fi
 
-		print_info "Step 3: Enable and restart node_exporter service"
-		
-		print_info "Step 3-1: 重新加载daemon-reload"
-		systemctl daemon-reload
-		
-		print_info "Step 3-2: Enable node_exporter服务"
-		systemctl enable node_exporter
-		
-		print_info "Step 3-3: Restart node_exporter服务"
-		systemctl restart node_exporter
+
 	fi
 	print_complete "安装 Node Exporter linux 版本 "
 }
