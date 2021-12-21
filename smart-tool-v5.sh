@@ -414,7 +414,7 @@ function install_nginx () {
 		print_error "Nginx已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "
-		sudo yum -y install nginx >/dev/null 2>&1
+		$installType nginx >/dev/null 2>&1
 
 		# /etc/nginx/nginx.conf
 		# listen       80 default_server;
@@ -4404,7 +4404,7 @@ function nagios_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 科学上网菜单
-function kxsw_menu() {
+function science_surfer_internet_menu() {
 	clear
 	cd "$HOME" || exit
 	echoContent red "=================================================================="
@@ -4780,7 +4780,7 @@ function menu() {
 		install_bpytop
 		;;
 	21)
-		kxsw_menu
+		science_surfer_internet_menu
 		;;
 	22)
 		nagios_menu
