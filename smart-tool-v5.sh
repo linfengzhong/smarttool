@@ -4668,17 +4668,17 @@ function menu() {
 	echoContent green "当前系统Linux版本 : \c"
 	checkSystem
 	echoContent red "=================================================================="
-	echoContent skyBlue "--------------------------安装基础软件-----------------------------"
-	echoContent yellow "10.git 版本控制 [Sub Menu]"
+	echoContent skyBlue "---------------------------基础软件-------------------------------"
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
-	echoContent skyBlue "---------------------------容器相关-------------------------------"
-	echoContent yellow "21.科学上网工具  - port: 443 [Sub Menu]"
-	echoContent yellow "22.Nagios监控  - port: 8443 [Sub Menu]"
-	echoContent yellow "23.Grafana监控 - port: 3000 [Sub Menu]"
-	echoContent yellow "24.Webmin管理  - port: 10000[Sub Menu]"
-	echoContent yellow "25.安装其他    - port: 7080 / 8080 / 8443 [Sub Menu] "
+	echoContent skyBlue "---------------------------大型软件-------------------------------"
+	echoContent yellow "21.科学上网工具 - port: 443 [Sub Menu]"
+	echoContent yellow "22.Nagios 监控  - port: 8443 [Sub Menu]"
+	echoContent yellow "23.Grafana 监控 - port: 3000 [Sub Menu]"
+	echoContent yellow "24.Webmin 管理  - port: 10000[Sub Menu]"
+	echoContent yellow "25.Git 版本控制 - port: 80 / 443 [Sub Menu] "
+	echoContent yellow "26.安装其他    - port: 7080 / 8080 / 8443 [Sub Menu] "
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
 	echoContent yellow "31.docker-compose up"
@@ -4691,11 +4691,14 @@ function menu() {
 	echoContent yellow "38.安装 docker CE & docker compose"
 	echoContent yellow "39.卸载 docker CE & docker compose"
 	echoContent skyBlue "---------------------------证书管理-------------------------------"
-	echoContent yellow "40.CA one key | 41.generate CA "
+	echoContent yellow "40.CA one key "
+	echoContent yellow "41.generate CA "
 	echoContent yellow "42.docker one key - lite"
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
 	echoContent yellow "0.更新脚本"
-	echoContent yellow "6.设置域名 | 7.设置时区：上海 ｜ 8.设置随机UUID "
+	echoContent yellow "6.设置域名 "
+	echoContent yellow "7.设置时区：上海 "
+	echoContent yellow "8.设置随机UUID "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
 	mkdirTools
@@ -4706,21 +4709,6 @@ function menu() {
 		updateSmartTool
 		sleep 1
 		st
-		;;
-	21)
-		kxsw_menu
-		;;
-	22)
-		nagios_menu
-		;;
-	23)
-		grafana_menu
-		;;
-	24)
-		webmin_menu
-		;;
-	25)
-		install_other_software_menu
 		;;
 	6)
 		clear_myHostDomain
@@ -4740,9 +4728,6 @@ function menu() {
 	9)
 		execBpytop
 		;;
-	10)
-		git_menu
-		;;
 	11)
 		install_prerequisite
 		;;
@@ -4751,6 +4736,24 @@ function menu() {
 		;;
 	13)
 		install_bpytop
+		;;
+	21)
+		kxsw_menu
+		;;
+	22)
+		nagios_menu
+		;;
+	23)
+		grafana_menu
+		;;
+	24)
+		webmin_menu
+		;;
+	25)
+		git_menu
+		;;
+	26)
+		install_other_software_menu
 		;;
 	30)
 		print_error "Docker 映射端口 7080 & 7443"
@@ -4851,7 +4854,7 @@ function check_procs_status() {
 	fi 
 }
 
-SmartToolVersion=v0.37
+SmartToolVersion=v0.38
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
