@@ -4119,7 +4119,7 @@ function webmin_menu() {
 	4)
 		restart_webmin_service
 		;;
-	5）
+	5)
 		uninstall_webmin
 		;;
 	*)
