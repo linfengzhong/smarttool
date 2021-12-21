@@ -388,7 +388,7 @@ function install_git () {
 	if [[ -f "/usr/bin/git" ]]; then
 		print_error "Git已经安装，无需重复操作！"
 	else
-		sudo yum -y install git >/dev/null 2>&1
+		$installType git >/dev/null 2>&1
 	fi
 	print_complete "Install Git "
 }
@@ -3945,11 +3945,18 @@ function install_exec_node_exporter_linux {
 	if [[ -f "/usr/sbin/node_exporter" ]]; then
 		print_error "Node Exporter已经安装，无需重复操作！"
 	else
-		print_info "Step 1: Installing the repository "
-		curl -Lo /etc/yum.repos.d/_copr_ibotty-prometheus-exporters.repo https://copr.fedorainfracloud.org/coprs/ibotty/prometheus-exporters/repo/epel-8/ibotty-prometheus-exporters-epel-8.repo
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Step 1: Installing the repository "
+			curl -Lo /etc/yum.repos.d/_copr_ibotty-prometheus-exporters.repo https://copr.fedorainfracloud.org/coprs/ibotty/prometheus-exporters/repo/epel-8/ibotty-prometheus-exporters-epel-8.repo
+			
+			print_info "Step 2: 安装 node_exporter"
+			$installType node_exporter
+		fi
 
-		print_info "Step 2: 安装 node_exporter"
-		yum -y install node_exporter
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			print_info "Step 2: 安装 prometheus-node-exporter"
+			$installType prometheus-node-exporter
+		fi
 
 		print_info "Step 3: Enable and restart node_exporter service"
 		
@@ -3968,7 +3975,15 @@ function install_exec_node_exporter_linux {
 # 卸载 Node Exporter linux 版本
 function uninstall_exec_node_exporter_linux {
 	print_start "卸载 Node Exporter linux 版本 "
-	yum -y remove node_exporter >/dev/null 2>&1
+
+	if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+		$removeType node_exporter >/dev/null 2>&1
+	fi
+	
+	if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+		$removeType prometheus-node-exporter >/dev/null 2>&1
+	fi
+	
 	print_complete "卸载 Node Exporter linux 版本 "
 }
 #-----------------------------------------------------------------------------#
@@ -4051,7 +4066,7 @@ function git_menu() {
 	1)
 		install_git
 		git_init
-		sleep 2
+		sleep 0.5
 		st
 		;;
 	2)
@@ -4061,18 +4076,18 @@ function git_menu() {
 	3)
 		github_pull_smarttool
 		github_pull_logserver
-		sleep 2
+		sleep 1
 		st
 		;;
 	4)
 		github_push_smarttool
 		github_push_logserver
-		sleep 2
+		sleep 1
 		st
 		;;
 	5)
 		upload_logs_configuration_dynamic_data
-		sleep 2
+		sleep 1
 		menu
 		;;
 	6)
