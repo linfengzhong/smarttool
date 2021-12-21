@@ -3946,6 +3946,7 @@ function install_exec_node_exporter_linux {
 		print_error "Node Exporter已经安装，无需重复操作！"
 	else
 		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Redhat / CentOS / Rocky Linux version"
 			print_info "Step 1: Installing the repository "
 			curl -Lo /etc/yum.repos.d/_copr_ibotty-prometheus-exporters.repo https://copr.fedorainfracloud.org/coprs/ibotty/prometheus-exporters/repo/epel-8/ibotty-prometheus-exporters-epel-8.repo
 			
@@ -3965,6 +3966,7 @@ function install_exec_node_exporter_linux {
 		fi
 
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			print_info "Debian / Ubuntu / Armbian version"
 			print_info "Step 2: 安装 prometheus-node-exporter"
 			$installType prometheus-node-exporter >/dev/null 2>&1
 
@@ -4700,7 +4702,7 @@ function menu() {
 	checkSystem
 	echoContent red "=================================================================="
 	echoContent skyBlue "---------------------------基础软件-------------------------------"
-	echoContent yellow "10.安装全部软件"
+	echoContent yellow "10.安装 全部软件"
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
@@ -4710,7 +4712,7 @@ function menu() {
 	echoContent yellow "23.Grafana 监控 - port: 3000 [Sub Menu]"
 	echoContent yellow "24.Webmin 管理  - port: 10000[Sub Menu]"
 	echoContent yellow "25.Git 版本控制 - port: 80 / 443 [Sub Menu] "
-	echoContent yellow "26.安装其他     - port: 7080 / 8080 / 8443 [Sub Menu] "
+	echoContent yellow "26.安装单机     - port: 7080 / 8080 / 8443 [Sub Menu] "
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
 	echoContent yellow "31.docker-compose up"
