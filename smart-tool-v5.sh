@@ -261,12 +261,18 @@ gpgkey=http://www.webmin.com/jcameron-key.asc" >/etc/yum.repos.d/webmin.repo;)
 		# Debian / Ubuntu / Armbian
 		# Webmin APT repository
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
-			cat <<EOF >>/etc/apt/sources.list
+
+			if cat /etc/apt/sources.list | grep Webmin  >/dev/null 2>&1 ; then
+				print_error "已经修改过端口, 无需重复操作！"
+			else
+				cat <<EOF >>/etc/apt/sources.list
 # Webmin APT repository
 deb https://download.webmin.com/download/repository sarge contrib
 EOF
+			fi
+
 			# install WebMin GPG key
-			cd /root
+			rm /root/jcameron-key.asc
 			print_info "下载GPG Key "
 			wget -c -q --show-progress -P /root -N --no-check-certificate https://download.webmin.com/jcameron-key.asc
 			apt-key add jcameron-key.asc >/dev/null 2>&1
@@ -313,6 +319,7 @@ function install_docker () {
 
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
 			$removeType docker docker-engine docker.io containerd runc >/dev/null 2>&1
+			rm /usr/share/keyrings/docker-archive-keyring.gpg
 			print_complete "1/3 Uninstall old versions of Docker CE "
 
 			# Update the apt package index and install packages to allow apt to use a repository over HTTPS
