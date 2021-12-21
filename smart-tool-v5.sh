@@ -187,7 +187,8 @@ function echoContent() {
 function install_prerequisite () {
 	print_start "安装 prerequisite "
 	if [[ -f "/etc/fuckGFW/prerequisite/check" ]]; then
-		print_error "wget lsof tar unzip curl socat nmap bind-utils jq tree 已经安装，无需重复操作！"
+		print_error "wget lsof tar unzip curl socat bind-utils jq 已经安装，无需重复操作！"
+		print_error "sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop 已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "	
 		print_info "wget lsof tar unzip curl socat bind-utils jq"
@@ -202,7 +203,7 @@ function install_prerequisite () {
 #-----------------------------------------------------------------------------#
 # Install acme.sh
 function install_acme () {
-	print_start "Install acme.sh "
+	print_start "安装 acme.sh "
 	if [[ -d "$HOME/.acme.sh" ]] ; then
 		print_error "acme.sh已经安装，无需重复操作！"
 	else
@@ -217,26 +218,26 @@ function install_acme () {
 # PyPi (will always have latest version)
 # Install or update to latest version
 function install_bpytop () {
-	print_start "Install bpytop "
+	print_start "安装 bpytop "
 	if [[ -f "/usr/local/bin/bpytop" ]]; then
 		print_error "bpytop已经安装，无需重复操作！"
 	else
-		print_start "Install Prerequisites for Python3 "
+		print_start "安装 Prerequisites for Python3 "
 		$installType gcc libffi-devel python3-devel \
 						openssl-devel \
 						automake autoconf libtool make >/dev/null 2>&1
 		print_info "安装进行中ing "
-		print_complete "Install Prerequisites for Python3 "
+		print_complete "安装 Prerequisites for Python3 "
 
 		pip3 install bpytop --upgrade >/dev/null 2>&1
 		print_info "安装进行中ing "
-		print_complete "1/2 Install bpytop "
+		print_complete "1/2 安装 bpytop "
 
-		echo 'alias bpytop=/usr/local/bin/bpytop'>>~/.bash_profile
-		source ~/.bash_profile 
+		#echo 'alias bpytop=/usr/local/bin/bpytop'>>~/.bash_profile
+		#source ~/.bash_profile 
 		print_complete "2/2 添加 bpytop 命令到.bash_profile"
 	fi
-	print_complete "Install bpytop"
+	print_complete "安装 bpytop"
 }
 #-----------------------------------------------------------------------------#
 # Install webmin
