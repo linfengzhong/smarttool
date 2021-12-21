@@ -378,6 +378,7 @@ function uninstall_docker_and_docker_compose () {
 #-----------------------------------------------------------------------------#
 # Install Git
 # https://git-scm.com
+#-----------------------------------------------------------------------------#
 function install_git () {
 	print_start "Install Git "
 	print_info "安装进行中ing "
@@ -387,6 +388,20 @@ function install_git () {
 		sudo yum -y install git >/dev/null 2>&1
 	fi
 	print_complete "Install Git "
+}
+#-----------------------------------------------------------------------------#
+# Uninstall Git
+# https://git-scm.com
+#-----------------------------------------------------------------------------#
+function uninstall_git () {
+	print_start "Uninstall Git "
+	print_info "卸载进行中ing "
+	if [[ -f "/usr/bin/git" ]]; then
+		$removeType git >/dev/null 2>&1
+	else
+		print_error "Git未安装，无需重复操作！"
+	fi
+	print_complete "Uninstall Git "
 }
 #-----------------------------------------------------------------------------#
 # Install nginx
@@ -3998,6 +4013,80 @@ function stop_remove_grafana {
 }
 #-----------------------------------------------------------------------------#
 # 安装其他软件菜单
+#-----------------------------------------------------------------------------#
+function install_git_menu() {
+	clear
+	cd "$HOME" || exit
+	echoContent red "=================================================================="
+	echoContent green "SmartTool：\c"
+	echoContent white "${SmartToolVersion}"
+	echoContent green "Github：\c"
+	echoContent white "https://github.com/linfengzhong/smarttool"
+	echoContent green "logserver：\c"
+	echoContent white "https://github.com/linfengzhong/logserver"
+	echoContent green "初始化服务器、安装Docker、执行容器、科学上网 on \c" 
+	echoContent white "${currentHost}"
+	echoContent green "当前主机外部IP地址： \c" 
+	echoContent white "${currentIP}"	
+	echoContent green "当前UUID： \c" 
+	echoContent white "${currentUUID}"
+	echoContent green "当前系统Linux版本 : \c" 
+	echoContent white "$release"
+	echoContent red "=================================================================="
+	echoContent skyBlue "---------------------------版本控制-------------------------------"  
+	echoContent yellow "1.git one key "
+	echoContent yellow "2.git clone "
+	echoContent yellow "3.git pull "
+	echoContent yellow "4.git push "
+	echoContent yellow "5.更新日志、配置文件、动态数据到GitHub "
+	echoContent yellow "6.安装 git "
+	echoContent skyBlue "----------------------------卸载菜单------------------------------"
+	echoContent yellow "9.卸载 git "
+	echoContent red "=================================================================="
+	read -r -p "Please choose the function (请选择) : " selectInstallType
+	case ${selectInstallType} in
+	1)
+		install_git
+		git_init
+		sleep 2
+		st
+		;;
+	2)
+		git_clone_smarttool
+		git_clone_logserver
+		;;
+	3)
+		github_pull_smarttool
+		github_pull_logserver
+		sleep 2
+		st
+		;;
+	4)
+		github_push_smarttool
+		github_push_logserver
+		sleep 2
+		st
+		;;
+	5)
+		upload_logs_configuration_dynamic_data
+		sleep 2
+		menu
+		;;
+	6)
+		install_git
+		;;
+	9)
+		uninstall_git
+		;;
+	*)
+		print_error "请输入正确的数字"
+		sleep 1
+		menu
+		;;
+	esac
+}
+#-----------------------------------------------------------------------------#
+# 安装其他软件菜单
 function install_other_software_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4584,14 +4673,10 @@ function menu() {
 	echoContent yellow "3.Grafana监控 - port: 3000 [Sub Menu]"
 	echoContent yellow "4.Webmin管理  - port: 10000[Sub Menu]"
 	echoContent yellow "5.安装其他 - port: 7080 / 8080 / 8443 [Sub Menu] "
+	echoContent yellow "10.git 版本控制 [Sub Menu]"
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
-	echoContent skyBlue "---------------------------版本控制-------------------------------"  
-	echoContent yellow "20.git one key"
-	echoContent yellow "21.git clone | 22.git pull | 23.git push"
-	echoContent yellow "24.更新日志、配置文件、动态数据到GitHub"
-	echoContent yellow "25.安装 git"
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
 	echoContent yellow "31.docker-compose up"
@@ -4599,7 +4684,6 @@ function menu() {
 	echoContent yellow "33.docker status"
 	echoContent yellow "38.安装 docker CE & docker compose"
 	echoContent yellow "39.卸载 docker CE & docker compose"
-	echoContent skyBlue "------------------------------------------------------------------"
 	echoContent yellow "34.generate conf & logs [Sub Menu]"
 	echoContent yellow "35.show configs [Sub Menu]"
 	echoContent yellow "36.show logs [Sub Menu]"
@@ -4655,11 +4739,7 @@ function menu() {
 		execBpytop
 		;;
 	10)
-		install_prerequisite
-		install_acme
-		install_bpytop
-		sleep 2
-		st
+		install_git_menu
 		;;
 	11)
 		install_prerequisite
@@ -4669,36 +4749,6 @@ function menu() {
 		;;
 	13)
 		install_bpytop
-		;;
-	20)
-		install_git
-		git_init
-		sleep 2
-		st
-		;;
-	21)
-		git_clone_smarttool
-		git_clone_logserver
-		;;
-	22)
-		github_pull_smarttool
-		github_pull_logserver
-		sleep 2
-		st
-		;;
-	23)
-		github_push_smarttool
-		github_push_logserver
-		sleep 2
-		st
-		;;
-	24)
-		upload_logs_configuration_dynamic_data
-		sleep 2
-		menu
-		;;
-	25)
-		install_git
 		;;
 	30)
 		print_error "Docker 映射端口 7080 & 7443"
@@ -4799,7 +4849,7 @@ function check_procs_status() {
 	fi 
 }
 
-SmartToolVersion=v0.36
+SmartToolVersion=v0.37
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
