@@ -349,7 +349,8 @@ function install_docker_compose () {
 	if [[ -f "/usr/local/bin/docker-compose" ]]; then
 		print_error "docker compose已经安装，无需重复操作！"
 	else
-		print_info "docker-compose 2.2.2"
+		print_info "docker-compose v2.2.2"
+		# https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-aarch64
 		sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
@@ -4561,7 +4562,7 @@ function conf_menu() {
 function menu() {
 	clear
 	cd "$HOME" || exit
-	echoContent red "==================================================================="
+	echoContent red "=================================================================="
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
@@ -4576,9 +4577,13 @@ function menu() {
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c"
 	checkSystem
-	echoContent red "==================================================================="
-	echoContent skyBlue "--------------------------安装基础软件------------------------------"
-	echoContent yellow "10.安装 全部程序"
+	echoContent red "=================================================================="
+	echoContent skyBlue "--------------------------安装基础软件-----------------------------"
+	echoContent yellow "1.科学上网工具 [Sub Menu]"
+	echoContent yellow "2.Nagios监控  - port: 8443 [Sub Menu]"
+	echoContent yellow "3.Grafana监控 - port: 3000 [Sub Menu]"
+	echoContent yellow "4.Webmin管理  - port: 10000[Sub Menu]"
+	echoContent yellow "5.安装其他 - port: 7080 / 8080 / 8443 [Sub Menu] "
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
@@ -4589,8 +4594,8 @@ function menu() {
 	echoContent yellow "25.安装 git"
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
-	echoContent yellow "42.docker one key - lite"
-	echoContent yellow "31.docker-compose up ｜ 32.docker-compose down"
+	echoContent yellow "31.docker-compose up"
+	echoContent yellow "32.docker-compose down"
 	echoContent yellow "33.docker status"
 	echoContent yellow "38.安装 docker CE & docker compose"
 	echoContent yellow "39.卸载 docker CE & docker compose"
@@ -4601,13 +4606,9 @@ function menu() {
 	echoContent yellow "37.show account"
 	echoContent skyBlue "---------------------------证书管理-------------------------------"
 	echoContent yellow "40.CA one key | 41.generate CA "
+	echoContent yellow "42.docker one key - lite"
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
 	echoContent yellow "0.更新脚本"
-	echoContent yellow "1.科学上网工具 [Sub Menu]"
-	echoContent yellow "2.Nagios监控  - port: 8443 [Sub Menu]"
-	echoContent yellow "3.Grafana监控 - port: 3000 [Sub Menu]"
-	echoContent yellow "4.Webmin管理  - port: 10000[Sub Menu]"
-	echoContent yellow "5.安装其他 - port: 7080 / 8080 / 8443 [Sub Menu] "
 	echoContent yellow "6.设置域名 | 7.设置时区：上海 ｜ 8.设置随机UUID "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
