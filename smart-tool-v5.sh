@@ -334,7 +334,7 @@ function install_docker () {
 		fi
 		
 		print_info "安装进行中ing "
-		$installType docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+		$installType docker-ce docker-ce-cli containerd.io
 		#sudo systemctl start docker
 		#sudo systemctl enable docker
 		print_complete "3/3 Install Docker Engine "
