@@ -185,17 +185,19 @@ function echoContent() {
 # Install Prerequisite
 # 安装必要程序
 function install_prerequisite () {
-	print_start "安装 wget lsof tar unzip curl socat nmap bind-utils jq tree "
+	print_start "安装 prerequisite "
 	if [[ -f "/etc/fuckGFW/prerequisite/check" ]]; then
 		print_error "wget lsof tar unzip curl socat nmap bind-utils jq tree 已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "	
+		print_info "wget lsof tar unzip curl socat bind-utils jq"
 		$installType wget lsof tar unzip curl socat bind-utils jq >/dev/null 2>&1
+		print_info "sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop"
 		$installType sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop >/dev/null 2>&1
 		mkdir -p /etc/fuckGFW/prerequisite
 		touch /etc/fuckGFW/prerequisite/check
 	fi
-	print_complete "安装 wget lsof tar unzip curl socat nmap bind-utils jq tree "
+	print_complete "安装 prerequisite "
 }
 #-----------------------------------------------------------------------------#
 # Install acme.sh
@@ -4669,6 +4671,7 @@ function menu() {
 	checkSystem
 	echoContent red "=================================================================="
 	echoContent skyBlue "---------------------------基础软件-------------------------------"
+	echoContent yellow "10.安装全部软件"
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
@@ -4727,6 +4730,11 @@ function menu() {
 		;;
 	9)
 		execBpytop
+		;;
+	10)
+		install_prerequisite
+		install_acme
+		install_bpytop
 		;;
 	11)
 		install_prerequisite
