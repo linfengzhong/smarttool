@@ -4014,7 +4014,7 @@ function stop_remove_grafana {
 #-----------------------------------------------------------------------------#
 # 安装其他软件菜单
 #-----------------------------------------------------------------------------#
-function install_git_menu() {
+function git_menu() {
 	clear
 	cd "$HOME" || exit
 	echoContent red "=================================================================="
@@ -4648,6 +4648,7 @@ function conf_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 主菜单
+#-----------------------------------------------------------------------------#
 function menu() {
 	clear
 	cd "$HOME" || exit
@@ -4668,26 +4669,27 @@ function menu() {
 	checkSystem
 	echoContent red "=================================================================="
 	echoContent skyBlue "--------------------------安装基础软件-----------------------------"
-	echoContent yellow "1.科学上网工具 [Sub Menu]"
-	echoContent yellow "2.Nagios监控  - port: 8443 [Sub Menu]"
-	echoContent yellow "3.Grafana监控 - port: 3000 [Sub Menu]"
-	echoContent yellow "4.Webmin管理  - port: 10000[Sub Menu]"
-	echoContent yellow "5.安装其他 - port: 7080 / 8080 / 8443 [Sub Menu] "
 	echoContent yellow "10.git 版本控制 [Sub Menu]"
 	echoContent yellow "11.安装 prerequisite"
 	echoContent yellow "12.安装 acme.sh"
 	echoContent yellow "13.安装 bpytop"
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
+	echoContent yellow "21.科学上网工具  - port: 443 [Sub Menu]"
+	echoContent yellow "22.Nagios监控  - port: 8443 [Sub Menu]"
+	echoContent yellow "23.Grafana监控 - port: 3000 [Sub Menu]"
+	echoContent yellow "24.Webmin管理  - port: 10000[Sub Menu]"
+	echoContent yellow "25.安装其他    - port: 7080 / 8080 / 8443 [Sub Menu] "
+	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
 	echoContent yellow "31.docker-compose up"
 	echoContent yellow "32.docker-compose down"
 	echoContent yellow "33.docker status"
-	echoContent yellow "38.安装 docker CE & docker compose"
-	echoContent yellow "39.卸载 docker CE & docker compose"
 	echoContent yellow "34.generate conf & logs [Sub Menu]"
 	echoContent yellow "35.show configs [Sub Menu]"
 	echoContent yellow "36.show logs [Sub Menu]"
 	echoContent yellow "37.show account"
+	echoContent yellow "38.安装 docker CE & docker compose"
+	echoContent yellow "39.卸载 docker CE & docker compose"
 	echoContent skyBlue "---------------------------证书管理-------------------------------"
 	echoContent yellow "40.CA one key | 41.generate CA "
 	echoContent yellow "42.docker one key - lite"
@@ -4705,19 +4707,19 @@ function menu() {
 		sleep 1
 		st
 		;;
-	1)
+	21)
 		kxsw_menu
 		;;
-	2)
+	22)
 		nagios_menu
 		;;
-	3)
+	23)
 		grafana_menu
 		;;
-	4)
+	24)
 		webmin_menu
 		;;
-	5)
+	25)
 		install_other_software_menu
 		;;
 	6)
@@ -4739,7 +4741,7 @@ function menu() {
 		execBpytop
 		;;
 	10)
-		install_git_menu
+		git_menu
 		;;
 	11)
 		install_prerequisite
