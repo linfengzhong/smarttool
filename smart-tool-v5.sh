@@ -7,11 +7,15 @@
 # 2021-July-12 [logserver] - leverage logserver
 # 2021-December-20 [smarttool] - V5 version for Octopus 
 #-----------------------------------------------------------------------------#
-#================== RHEL 7/8 | CentOS 7/8 | Rocky Linux 8 ====================#
+#================== RHEL | CentOS | Rocky ====================================#
 #================== Debian | Ubuntu | Armbian ================================#
 #-----------------------------------------------------------------------------#
 # 初始化全局变量
+#-----------------------------------------------------------------------------#
 export LANG=en_US.UTF-8
+#-----------------------------------------------------------------------------#
+# 初始化工具
+#-----------------------------------------------------------------------------#
 function inital_smart_tool() {
 	# default Host
 	defaultHost="octopus.dalian.ml"
@@ -115,32 +119,38 @@ function inital_smart_tool() {
 	fi
 }
 #-----------------------------------------------------------------------------#
-#打印Start
+# 打印Start
+#-----------------------------------------------------------------------------#
 function print_start() {
 	echo -e "${Start} ${Blue} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
-#打印Info
+# 打印Info
+#-----------------------------------------------------------------------------#
 function print_info() {
 	echo -e "${Info} ${Blue}  $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
-#打印OK
+# 打印OK
+#-----------------------------------------------------------------------------#
 function print_ok() {
 	echo -e "${OK} ${Blue} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
-#打印Done
+# 打印Done
+#-----------------------------------------------------------------------------#
 function print_done() {
 	echo -e "${DONE} ${Blue}  $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
-#打印Error
+# 打印Error
+#-----------------------------------------------------------------------------#
 function print_error() {
 	echo -e "${ERROR} ${RedBG} $1 ${Font}"
 }
 #-----------------------------------------------------------------------------#
-#判定 成功 or 失败
+# 判定 成功 or 失败
+#-----------------------------------------------------------------------------#
 function print_complete() {
 	if [[ 0 -eq $? ]]; then
 		print_done "$1" 
@@ -152,6 +162,7 @@ function print_complete() {
 }
 #-----------------------------------------------------------------------------#
 # 输出带颜色内容 字体颜色配置
+#-----------------------------------------------------------------------------#
 function echoContent() {
 	case $1 in
 		# 红色
@@ -184,6 +195,7 @@ function echoContent() {
 #-----------------------------------------------------------------------------#
 # Install Prerequisite
 # 安装必要程序
+#-----------------------------------------------------------------------------#
 function install_prerequisite () {
 	print_start "安装 prerequisite "
 	if [[ -f "/etc/fuckGFW/prerequisite/check" ]]; then
@@ -202,6 +214,7 @@ function install_prerequisite () {
 }
 #-----------------------------------------------------------------------------#
 # Install acme.sh
+#-----------------------------------------------------------------------------#
 function install_acme () {
 	print_start "安装 acme.sh "
 	if [[ -d "$HOME/.acme.sh" ]] ; then
@@ -217,6 +230,7 @@ function install_acme () {
 # https://github.com/aristocratos/bpytop
 # PyPi (will always have latest version)
 # Install or update to latest version
+#-----------------------------------------------------------------------------#
 function install_bpytop () {
 	print_start "安装 bpytop "
 	if [[ -f "/usr/local/bin/bpytop" ]]; then
@@ -243,6 +257,7 @@ function install_bpytop () {
 # Install webmin
 # https://webmin.com
 # https://doxfer.webmin.com/Webmin/Installation
+#-----------------------------------------------------------------------------#
 function install_webmin () {
 	print_start "Install webmin "
 	if [[ -d "/etc/webmin" ]]; then
@@ -295,6 +310,7 @@ EOF
 #-----------------------------------------------------------------------------#
 # Install Docker CE
 # https://docs.docker.com/engine/install/centos/
+#-----------------------------------------------------------------------------#
 function install_docker () {
 	print_start "Install Docker CE "
 	if [[ -f "/usr/bin/docker" ]]; then
@@ -347,6 +363,7 @@ function install_docker () {
 #-----------------------------------------------------------------------------#
 # Install Docker Compose
 # https://docs.docker.com/compose/install/#install-compose
+#-----------------------------------------------------------------------------#
 function install_docker_compose () {
 	print_start "Install docker compose "
 	if [[ -f "/usr/local/bin/docker-compose" ]]; then
@@ -363,7 +380,8 @@ function install_docker_compose () {
 	print_complete "Install docker compose "
 }
 #-----------------------------------------------------------------------------#
-# 卸载 docker CE & docker compose 
+# 卸载 docker CE & docker compose
+#-----------------------------------------------------------------------------#
 function uninstall_docker_and_docker_compose () {
 	print_start "卸载 docker CE & docker compose "
 	print_info "Uninstall the Docker Engine, CLI, and Containerd packages "
@@ -408,6 +426,7 @@ function uninstall_git () {
 }
 #-----------------------------------------------------------------------------#
 # Install nginx
+#-----------------------------------------------------------------------------#
 function install_nginx () {
 	print_start "Install Nginx - port: 7080"
 	if [[ -d "/etc/nginx" ]]; then
@@ -440,35 +459,48 @@ function install_nginx () {
 }
 #-----------------------------------------------------------------------------#
 # 安装 apache httpd
+#-----------------------------------------------------------------------------#
 function install_apache_httpd {
 	print_start "安装 apache httpd, 并设置端口：8080"
-	if [[ -d "/etc/httpd" ]]; then
-		print_error "apache httpd已安装，无需重复操作！"
-	else
-		print_info "安装进行中ing "
-		yum -y install httpd >/dev/null 2>&1
-		# /etc/httpd/conf/httpd.conf
-		if cat /etc/httpd/conf/httpd.conf | grep "Listen 8080" ; then
-			print_error "已经设置端口：8080，无需重复设置！"
+
+
+	if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+		if [[ -d "/etc/httpd" ]]; then
+			print_error "apache httpd已安装，无需重复操作！"
 		else
-			sed -i 's!Listen 80!Listen 8080!g' /etc/httpd/conf/httpd.conf
+			print_info "安装进行中ing "
+			$installType httpd >/dev/null 2>&1
+			# /etc/httpd/conf/httpd.conf
+			if cat /etc/httpd/conf/httpd.conf | grep "Listen 8080" ; then
+				print_error "已经设置端口：8080，无需重复设置！"
+			else
+				sed -i 's!Listen 80!Listen 8080!g' /etc/httpd/conf/httpd.conf
+			fi
+			# systemctl reload httpd
+			systemctl enable httpd
+			systemctl restart httpd
 		fi
-		# systemctl reload httpd
-		systemctl enable httpd
-		systemctl restart httpd
 	fi
+
+	if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+
+	fi
+
+
 	print_complete "安装 apache httpd, 并设置端口：8080"
 }
 #-----------------------------------------------------------------------------#
-# Install nginx
+# Install tomcat
+#-----------------------------------------------------------------------------#
 function install_tomcat () {
 	print_start "Install Tomcat "
 	print_info "安装进行中ing "
-	sudo yum -y install tomcat #>/dev/null 2>&1
+	$installType tomcat #>/dev/null 2>&1
 	print_complete "Install Tomcat "
 }
 #-----------------------------------------------------------------------------#
 # 安装 v2ray-agent
+#-----------------------------------------------------------------------------#
 function install_v2ray_agent {
 	# https://github.com/mack-a/v2ray-agent
 	print_start "安装 v2ray-agent "
@@ -476,12 +508,13 @@ function install_v2ray_agent {
 	chmod 700 /root/install.sh
 	print_complete "安装 v2ray-agent "
 	print_info "运行 v2ray-agent "
-	sleep 2
+	sleep 0.5
 	cd $HOME
 	./install.sh
 }
 #-----------------------------------------------------------------------------#
 # 安装 BBR
+#-----------------------------------------------------------------------------#
 function install_bbr() {
 	echoContent red "\n=============================================================="
 	echoContent green "BBR、DD脚本用的[ylx2016]的成熟作品，请熟知"
@@ -498,44 +531,50 @@ function install_bbr() {
 }
 #-----------------------------------------------------------------------------#
 # 清理屏幕
+#-----------------------------------------------------------------------------#
 function cleanScreen() {
 	clear
 }
 #-----------------------------------------------------------------------------#
 # 调用bpytop
+#-----------------------------------------------------------------------------#
 function execBpytop() {
 	/usr/local/bin/bpytop
 }
 #-----------------------------------------------------------------------------#
 # Shutdown Docker Compose, Delete All-In-One folder & Docker Compose Up
 # 关闭docker-compose
+#-----------------------------------------------------------------------------#
 function docker_compose_down () {
 	print_start "Shutdown Docker Compose "
 	print_info "关闭 Docker Compose VM "
 	cd $WORKDIR
-	sudo docker-compose down
+	docker-compose down
 	print_complete "关闭 Docker Compose VM "
 }
 #-----------------------------------------------------------------------------#
 # 启动docker-compose
+#-----------------------------------------------------------------------------#
 function docker_compose_up () {
 	print_start "启动 Docker Compose "
 	cd $WORKDIR
-	sudo docker-compose build
-	sudo docker-compose up -d
+	docker-compose build
+	docker-compose up -d
 	print_complete "启动 Docker Compose "
 }
 #-----------------------------------------------------------------------------#
 # 查看Docker Images
+#-----------------------------------------------------------------------------#
 function docker_images () {
 	print_info "查看Docker Images "
-	sudo docker images
+	docker images
 }
 #-----------------------------------------------------------------------------#
 # 列出所有运行的docker container
+#-----------------------------------------------------------------------------#
 function docker_container_ps () {
 	print_info "列出所有运行的docker container "
-	sudo docker container ps
+	docker container ps
 }
 #-----------------------------------------------------------------------------#
 # Git global configuration
@@ -578,6 +617,7 @@ function git_init () {
 }
 #-----------------------------------------------------------------------------#
 # Git clone smarttool.git
+#-----------------------------------------------------------------------------#
 function git_clone_smarttool () {
 	print_start "Git clone ToolBox "
 	if [[ -d "$HOME/git/" ]];then
@@ -4735,7 +4775,7 @@ function menu() {
 	echoContent yellow "0.更新脚本"
 	echoContent yellow "6.设置域名 "
 	echoContent yellow "7.设置时区：上海 "
-	echoContent yellow "8.设置随机UUID "
+	echoContent yellow "8.设置随机 UUID "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
 	mkdirTools
