@@ -663,15 +663,15 @@ function checkSystem() {
 		fi
 		release="debian"
 		installType='apt -y install'
-		upgrade="apt update -y"
-		removeType='apt -y autoremove'
+		upgrade="apt -y update"
+		removeType='apt -y remove'
         echoContent white "Debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
-		installType='apt-get -y install'
-		upgrade="apt-get update -y"
-		removeType='apt-get --purge remove'
+		installType='apt -y install'
+		upgrade="apt -y update"
+		removeType='apt -y remove'
 		echoContent white "Ubuntu"		
 
 	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
@@ -1913,6 +1913,19 @@ function init_webmin_ssl {
 	print_complete "初始化webmin SSL证书 "
 }
 #-----------------------------------------------------------------------------#
+# Disable WebMin SSL
+function disable_webmin_ssl {
+	print_start "Disable WebMin SSL"
+
+	if cat /etc/webmin/miniserv.conf | grep ssl=1  >/dev/null 2>&1 ; then
+		sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+	else
+		print_error "已经修改SSL, 无需重复操作！"
+	fi
+
+	print_complete "Disable WebMin SSL"
+}
+#-----------------------------------------------------------------------------#
 # 修改 webmin 端口：10000 -> 9999 
 function init_webmin_port_9999 {
 	print_start "修改webmin端口为 9999"
@@ -1926,7 +1939,6 @@ function init_webmin_port_9999 {
 
 	print_complete "修改webmin端口为 9999"
 }
-
 #-----------------------------------------------------------------------------#
 # 重启 webmin 服务
 function restart_webmin_service {
@@ -4089,21 +4101,23 @@ function webmin_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "----------------------------主机管理------------------------------"
 	echoContent yellow "0.安装 全部程序"
 	echoContent yellow "1.安装 webmin "
 	echoContent yellow "2.激活 webmin SSL "
-	echoContent yellow "3.修改 webmin port: 9999 "
-	echoContent yellow "4.重启 webmin service "
-	echoContent yellow "5.卸载 webmin "
+	echoContent yellow "3.Disable WebMin SSL "
+	echoContent yellow "4.修改 webmin port: 9999 "
+	echoContent yellow "5.重启 webmin service "
+	echoContent yellow "6.卸载 webmin "
 	echoContent red "=================================================================="
 	read -r -p "Please choose the function (请选择) : " selectInstallType
 	case ${selectInstallType} in
 	0)
 		install_webmin
 		init_webmin_ssl
+		disable_webmin_ssl
 		init_webmin_port_9999
 		restart_webmin_service
 		;;
@@ -4114,12 +4128,15 @@ function webmin_menu() {
 		init_webmin_ssl
 		;;
 	3)
-		init_webmin_port_9999
+		disable_webmin_ssl
 		;;
 	4)
-		restart_webmin_service
+		init_webmin_port_9999
 		;;
 	5)
+		restart_webmin_service
+		;;
+	6)
 		uninstall_webmin
 		;;
 	*)
