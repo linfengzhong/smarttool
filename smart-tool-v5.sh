@@ -292,23 +292,42 @@ function install_docker () {
 		print_error "Docker CE已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "
-		sudo yum -y remove docker \
-						docker-client \
-						docker-client-latest \
-						docker-common \
-						docker-latest \
-						docker-latest-logrotate \
-						docker-logrotate \
-						docker-engine >/dev/null 2>&1
-		print_complete "1/3 Uninstall old versions of Docker CE "
+
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			$removeType docker \
+							docker-client \
+							docker-client-latest \
+							docker-common \
+							docker-latest \
+							docker-latest-logrotate \
+							docker-logrotate \
+							docker-engine >/dev/null 2>&1
+			print_complete "1/3 Uninstall old versions of Docker CE "
+			
+			$installType yum-utils >/dev/null 2>&1
+			sudo yum-config-manager \
+					--add-repo \
+					https://download.docker.com/linux/centos/docker-ce.repo  >/dev/null 2>&1
+			print_complete "2/3 Set up the repository for Docker "			
+		fi
+
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			$removeType docker docker-engine docker.io containerd runc >/dev/null 2>&1
+			print_complete "1/3 Uninstall old versions of Docker CE "
+
+			# Update the apt package index and install packages to allow apt to use a repository over HTTPS
+			$installType ca-certificates curl gnupg lsb-release >/dev/null 2>&1
+			# Add Docker’s official GPG key
+			curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+			# Set up the stable repository
+			echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+			print_complete "2/3 Set up GPG Key & repository for Docker "
+		fi
 		
-		sudo yum -y install yum-utils >/dev/null 2>&1
-		sudo yum-config-manager \
-				--add-repo \
-				https://download.docker.com/linux/centos/docker-ce.repo  >/dev/null 2>&1
-		print_complete "2/3 Set up the repository for Docker "
 		print_info "安装进行中ing "
-		sudo yum -y install docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
+		$installType docker-ce docker-ce-cli containerd.io >/dev/null 2>&1
 		sudo systemctl start docker
 		sudo systemctl enable docker
 		print_complete "3/3 Install Docker Engine "
@@ -323,7 +342,8 @@ function install_docker_compose () {
 	if [[ -f "/usr/local/bin/docker-compose" ]]; then
 		print_error "docker compose已经安装，无需重复操作！"
 	else
-		sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
+		print_info "docker-compose 2.2.2"
+		sudo curl -L "https://github.com/docker/compose/releases/download/2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
 		sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
 		docker-compose --version
@@ -336,7 +356,7 @@ function install_docker_compose () {
 function uninstall_docker_and_docker_compose () {
 	print_start "卸载 docker CE & docker compose "
 	print_info "Uninstall the Docker Engine, CLI, and Containerd packages "
-	yum -y remove docker-ce docker-ce-cli containerd.io
+	$removeType docker-ce docker-ce-cli containerd.io
 
 	print_info "Delete all images, containers, and volumes "
 	rm -rf /var/lib/docker
@@ -4165,7 +4185,7 @@ function nagios_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "----------------------------安装菜单------------------------------"
 	echoContent yellow "0.安装 全部软件 "	
@@ -4268,7 +4288,7 @@ function kxsw_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "--------------------------科学上网菜单----------------------------"
 	echoContent yellow "1.安装 v2ray-agent | 快捷方式 [vasma]"
@@ -4329,7 +4349,7 @@ function generate_conf_log_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "--------------------------生成配置文件----------------------------"
 	echoContent skyBlue "--> /etc/fuckGFW/"
@@ -4427,7 +4447,7 @@ function log_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "--------------------------查看错误日志----------------------------"
 	echoContent yellow "1.show error.log [Nginx] "
@@ -4488,7 +4508,7 @@ function conf_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "--------------------------查看配置文件----------------------------"
 	echoContent yellow "1.show docker-compose.yml"
@@ -4534,7 +4554,7 @@ function conf_menu() {
 function menu() {
 	clear
 	cd "$HOME" || exit
-	echoContent red "=================================================================="
+	echoContent red "==================================================================="
 	echoContent green "SmartTool：\c"
 	echoContent white "${SmartToolVersion}"
 	echoContent green "Github：\c"
@@ -4548,8 +4568,8 @@ function menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
-	echoContent red "=================================================================="
+	echoContent white "$release"
+	echoContent red "==================================================================="
 	echoContent skyBlue "--------------------------安装基础软件------------------------------"
 	echoContent yellow "10.安装 全部程序"
 	echoContent yellow "11.安装 prerequisite"
