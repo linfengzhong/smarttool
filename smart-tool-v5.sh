@@ -676,9 +676,9 @@ function checkSystem() {
 
 	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
 		release="armbian"
-		installType='apt-get -y install'
-		upgrade="apt-get update -y"
-		removeType='apt-get --purge remove'
+		installType='apt -y install'
+		upgrade="apt -y update"
+		removeType='apt -y remove'
 		echoContent white "Armbian"
 	fi
 
@@ -1939,10 +1939,10 @@ function restart_webmin_service {
 #-----------------------------------------------------------------------------#
 # 重启 webmin 服务
 function uninstall_webmin {
-	print_info "卸载 webmin "
+	print_info "卸载 Webmin "
 
 	if [[ -d "/etc/webmin" ]]; then
-		print_error "开始卸载Webmin "
+		print_info "开始卸载Webmin "
 		# Redhat / CentOS / Rocky
 		# Webmin APT repository
 		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
@@ -1953,7 +1953,7 @@ function uninstall_webmin {
 		# Webmin APT repository
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
 			# install WebMin GPG key
-			print_info "删除GPG Key "
+			print_info "删除 GPG Key "
 			rm /root/jcameron-key.asc >/dev/null 2>&1
 		fi
 		print_info "卸载 Webmin "
