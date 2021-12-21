@@ -4007,7 +4007,7 @@ function install_other_software_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "----------------------------安装菜单------------------------------"
 	echoContent yellow "1.安装 Node Exporter 单机版 - Port: 9100 "
@@ -4057,7 +4057,7 @@ function grafana_menu() {
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
 	echoContent green "当前系统Linux版本 : \c" 
-	checkSystem
+	echoContent white "$release"
 	echoContent red "=================================================================="
 	echoContent skyBlue "----------------------------安装菜单------------------------------"
 	echoContent yellow "1.安装 & 运行 Prometheus container - Port: 9090 "
@@ -4567,8 +4567,8 @@ function menu() {
 	echoContent white "${currentIP}"	
 	echoContent green "当前UUID： \c" 
 	echoContent white "${currentUUID}"
-	echoContent green "当前系统Linux版本 : \c" 
-	echoContent white "$release"
+	echoContent green "当前系统Linux版本 : \c"
+	checkSystem
 	echoContent red "==================================================================="
 	echoContent skyBlue "--------------------------安装基础软件------------------------------"
 	echoContent yellow "10.安装 全部程序"
