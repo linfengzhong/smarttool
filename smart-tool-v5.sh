@@ -205,7 +205,7 @@ function install_prerequisite () {
 	else
 		print_info "安装进行中ing "	
 		print_info "wget lsof tar unzip curl socat bind-utils jq"
-		$installType wget lsof tar unzip curl socat bind-utils jq >/dev/null 2>&1
+		$installType wget lsof tar unzip curl socat bind-utils jq
 		print_info "sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop"
 		$installType sysstat usbutils pciutils lshw iperf iperf3 neofetch psmisc tree python3-dev python3-pip bpytop nmap p7zip-full rfkill hwinfo hdparm htop >/dev/null 2>&1
 		mkdir -p /etc/fuckGFW/prerequisite
