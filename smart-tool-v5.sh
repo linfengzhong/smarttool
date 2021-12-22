@@ -2247,7 +2247,7 @@ ${tempUUID}
 EOF
 	currentUUID=$(cat $HOME/.myHostUUID)
 	fi
-	#print_complete "设置 current UUID "
+	print_complete "设置 current UUID "
 }
 #-----------------------------------------------------------------------------#
 # 生成 clash -> account 配置文件 
