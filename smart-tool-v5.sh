@@ -4945,6 +4945,7 @@ function menu() {
 	echoContent yellow "42.docker one key - lite"
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
 	echoContent yellow "0.更新脚本"
+	echoContent yellow "4.显示外部 IP "
 	echoContent yellow "5.获取外部 IP "
 	echoContent yellow "6.设置域名 Hostname"
 	echoContent yellow "7.设置时区 Asia / Shanghai "
@@ -4959,6 +4960,9 @@ function menu() {
 		updateSmartTool
 		sleep 1
 		st
+		;;
+	4)
+		show_ip
 		;;
 	5)
 		clear_myHostIP
