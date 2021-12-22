@@ -638,7 +638,7 @@ function git_clone_smarttool () {
 			#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v5.sh $HOME
 			cp -pf ${SmartToolDir}/smart-tool-v5.sh $HOME
 			chmod 700 $HOME/smart-tool-v5.sh
-			aliasInstall
+			inital_alias
 		fi
 	else
 		print_error "请先初始化Git！"
@@ -659,7 +659,7 @@ function github_pull_smarttool () {
 	#cp -pf $HOME/git/smarttool/Docker/docker-compose/$currentHost/smart-tool-v5.sh $HOME
 	cp -pf ${SmartToolDir}/smart-tool-v5.sh $HOME
 	chmod 700 $HOME/smart-tool-v5.sh
-	aliasInstall
+	inital_alias
 }
 #-----------------------------------------------------------------------------#
 # 同步上传Git文件夹
@@ -737,7 +737,7 @@ function checkSystem() {
 		installType='yum -y install'
 		removeType='yum -y remove'
 		upgrade="yum update -y --skip-broken"
-		echoContent white "Rocky Linux release 8.4 (Green Obsidian)"
+		echoContent white "rocky"
 
 	elif [[ -n $(find /etc -name "redhat-release") ]] || grep </proc/version -q -i "centos"; then
 		mkdir -p /etc/yum.repos.d
@@ -753,7 +753,7 @@ function checkSystem() {
 		installType='yum -y install'
 		removeType='yum -y remove'
 		upgrade="yum update -y --skip-broken"
-		echoContent white "CentOS 8.4"
+		echoContent white "centos"
 
 	elif grep </etc/issue -q -i "debian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "debian" && [[ -f "/proc/version" ]]; then
 		if grep </etc/issue -i "8"; then
@@ -763,14 +763,14 @@ function checkSystem() {
 		installType='apt -y install'
 		upgrade="apt -y update"
 		removeType='apt -y remove'
-        echoContent white "Debian"
+        echoContent white "debian"
 
 	elif grep </etc/issue -q -i "ubuntu" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "ubuntu" && [[ -f "/proc/version" ]]; then
 		release="ubuntu"
 		installType='apt -y install'
 		upgrade="apt -y update"
 		removeType='apt -y remove'
-		echoContent white "Ubuntu"		
+		echoContent white "ubuntu"		
 
 	elif grep </etc/issue -q -i "armbian" && [[ -f "/etc/issue" ]] || grep </etc/issue -q -i "armbian" && [[ -f "/proc/version" ]]; then
 		release="armbian"
@@ -917,7 +917,7 @@ function installCronTLS() {
 #-----------------------------------------------------------------------------#
 # 脚本快捷方式
 #-----------------------------------------------------------------------------#
-function aliasInstall() {
+function inital_alias() {
 	if [[ -f "$HOME/smart-tool-v5.sh" ]] && [[ -d "/etc/smart-tool" ]] && grep <$HOME/smart-tool-v5.sh -q "Author: Linfeng Zhong (Fred)"; then
 		mv "$HOME/smart-tool-v5.sh" /etc/smart-tool/smart-tool-v5.sh
 		if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/st" ]]; then
@@ -986,7 +986,7 @@ function updateSmartTool() {
 #-----------------------------------------------------------------------------#
 # 初始化安装目录
 #-----------------------------------------------------------------------------#
-function mkdirTools() {
+function initial_directory() {
 	mkdir -p /etc/smart-tool
 
 	mkdir -p /etc/fuckGFW/docker/${currentHost}
@@ -4979,8 +4979,6 @@ function menu() {
 	echoContent yellow "6.设置时区 Asia / Shanghai "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
-	mkdirTools
-	aliasInstall
 	read -r -p "Please choose the function (请选择) : " selectInstallType
 	case ${selectInstallType} in
 	0)
@@ -5128,6 +5126,8 @@ inital_smart_tool $1
 set_current_host_domain
 set_current_uuid
 get_current_host_IP
+initial_directory
+inital_alias
 #sleep 5
 cronRenewTLS
 menu
