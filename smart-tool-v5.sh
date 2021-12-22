@@ -2167,7 +2167,7 @@ function get_current_host_IP {
 				print_info "----- 默认服务器IP ----"
 				print_error "${currentIP}"
 				print_info "----- 默认服务器IP ----"
-				echo "${defaultHost}" > $HOME/.myHostIP
+				echo "${currentIP}" > $HOME/.myHostIP
 			fi
 		currentIP=$(cat $HOME/.myHostIP)
 	fi
