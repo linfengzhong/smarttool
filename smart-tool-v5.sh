@@ -931,6 +931,28 @@ function aliasInstall() {
 	echoContent green "快捷方式创建成功，可执行[st]重新打开脚本"
 }
 #-----------------------------------------------------------------------------#
+# 更新脚步GIT快捷方式
+#-----------------------------------------------------------------------------#
+function uu_refresh_script() {
+
+	cat <<EOF >$HOME/uu
+#!/usr/bin/env bash
+cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll && ./smart-tool-v5.sh
+EOF
+		mv ~/uu /etc/smart-tool/uu
+		if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
+			ln -s /etc/smart-tool/uu /usr/bin/uu
+			chmod 700 /usr/bin/uu
+			rm -rf "$HOME/uu"
+		elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/uu" ]]; then
+			ln -s /etc/smart-tool/uu /usr/sbin/uu
+			chmod 700 /usr/sbin/uu
+			rm -rf "$HOME/uu"
+		fi
+	fi
+	echoContent green "快捷方式创建成功，可执行[uu]重新打开脚本"
+}
+#-----------------------------------------------------------------------------#
 # 更新脚本
 #-----------------------------------------------------------------------------#
 function updateSmartTool() {
@@ -4941,7 +4963,7 @@ function menu() {
 	echoContent yellow "40.CA one key "
 	echoContent yellow "41.generate CA "
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
-	echoContent yellow "0.更新脚本"
+	echoContent yellow "0.更新脚本 | 1.git pull方式更新脚本"
 	echoContent yellow "4.显示外部 IP | 5.获取外部 IP "
 	echoContent yellow "6.设置域名 Hostname"
 	echoContent yellow "7.设置时区 Asia / Shanghai "
@@ -4956,6 +4978,10 @@ function menu() {
 		updateSmartTool
 		sleep 1
 		st
+		;;
+	1)
+		uu_refresh_script
+		sleep 1
 		;;
 	4)
 		show_ip
