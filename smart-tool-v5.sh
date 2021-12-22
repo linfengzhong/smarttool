@@ -113,11 +113,11 @@ function inital_smart_tool() {
 	# IP地址
 	currentIP=
 
-	if [[ -f "$HOME/.currentUUID" ]]; then
-		currentUUID=$(cat $HOME/.currentUUID)
-	else
-		currentUUID=${defaultUUID}
-	fi
+	#if [[ -f "$HOME/.currentUUID" ]]; then
+	#	currentUUID=$(cat $HOME/.currentUUID)
+	#else
+	#	currentUUID=${defaultUUID}
+	#fi
 }
 #-----------------------------------------------------------------------------#
 # 打印Start
@@ -5094,6 +5094,7 @@ SmartToolVersion=v0.39
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
+set_current_uuid
 get_current_host_IP
 cronRenewTLS
 menu
