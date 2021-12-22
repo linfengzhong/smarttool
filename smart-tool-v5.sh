@@ -2204,7 +2204,7 @@ function set_current_host_domain {
 	print_complete "设置 current Host Domain "
 
 	hostnamectl set-hostname ${currentHost}
-	hostnamectl status
+	#hostnamectl status
 
 }
 #-----------------------------------------------------------------------------#
