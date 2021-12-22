@@ -2163,7 +2163,7 @@ function clear_myHostDomain {
 #-----------------------------------------------------------------------------#
 function clear_currentUUID {
 	# print_start "重新初始化 服务器域名 "
-	rm -f $HOME/.currentUUID
+	rm -f $HOME/.myHostUUID
 	# print_info "清理完成"
 	# print_complete "重新初始化 服务器域名 "
 }
@@ -2206,8 +2206,8 @@ function set_current_host_domain {
 		print_error "已经设置服务器域名，无需重复设置！"
 		currentHost=$(cat $HOME/.myHostDomain)
 	else
-		print_info "初始化 SmartTool v5 "
-		print_info "$HOME/.myHostDomain "
+		#print_info "初始化 SmartTool v5 "
+		#print_info "$HOME/.myHostDomain "
 		read -r -p "请设置服务器域名：" inputHostName
 			if [ $inputHostName ]; then
 				print_info "----- 服务器域名 ----"
@@ -2236,16 +2236,16 @@ function set_current_host_domain {
 #-----------------------------------------------------------------------------#
 function set_current_uuid {
 	print_start "设置 current UUID "
-	if [[ -f "$HOME/.currentUUID" ]]; then
-		currentUUID=$(cat $HOME/.currentUUID)
+	if [[ -f "$HOME/.myHostUUID" ]]; then
+		currentUUID=$(cat $HOME/.myHostUUID)
 	else
-		print_info "$HOME/.currentUUID"
+		print_info "$HOME/.myHostUUID"
 		local tempUUID
 		tempUUID=$(cat /proc/sys/kernel/random/uuid)
-		cat <<EOF >$HOME/.currentUUID
+		cat <<EOF >$HOME/.myHostUUID
 ${tempUUID}
 EOF
-	currentUUID=$(cat $HOME/.currentUUID)
+	currentUUID=$(cat $HOME/.myHostUUID)
 	fi
 	print_complete "设置 current UUID "
 }
