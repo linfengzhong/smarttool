@@ -2246,9 +2246,9 @@ function set_current_uuid {
 		cat <<EOF >$HOME/.myHostUUID
 ${tempUUID}
 EOF
-	currentUUID=$(cat $HOME/.myHostUUID)
+		currentUUID=$(cat $HOME/.myHostUUID)
+		print_error "${currentUUID}"
 	fi
-	print_error "${currentUUID}"
 	print_complete "设置 current UUID "
 }
 #-----------------------------------------------------------------------------#
