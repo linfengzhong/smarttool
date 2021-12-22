@@ -937,7 +937,7 @@ function uu_refresh_script() {
 	print_start "git pull 方式更新脚本"
 	cat <<EOF >$HOME/uu
 #!/usr/bin/env bash
-cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll && ./smart-tool-v5.sh
+cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ./smart-tool-v5.sh
 EOF
 	mv ~/uu /etc/smart-tool/uu
 	if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
@@ -5124,4 +5124,4 @@ set_current_uuid
 get_current_host_IP
 cronRenewTLS
 menu
-# cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll && ./smart-tool-v5.sh
+# cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ./smart-tool-v5.sh
