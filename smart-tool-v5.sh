@@ -5125,6 +5125,7 @@ inital_smart_tool $1
 set_current_host_domain
 set_current_uuid
 get_current_host_IP
+sleep 1
 cronRenewTLS
 menu
 # cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ./smart-tool-v5.sh
