@@ -2176,8 +2176,8 @@ function get_current_host_IP {
 		print_error "已获取服务器IP，无需重复设置！"
 		currentIP=$(cat $HOME/.myHostIP)
 	else
-		print_info "初始化 SmartTool v5 "
-		print_info "$HOME/.myHostIP "
+		#print_info "初始化 SmartTool v5 "
+		#print_info "$HOME/.myHostIP "
 		read -r -p "请设置服务器IP：" inputHostIP
 			if [ $inputHostIP ]; then
 				print_info "----- 服务器域名 ----"
@@ -2195,7 +2195,7 @@ function get_current_host_IP {
 			fi
 		currentIP=$(cat $HOME/.myHostIP)
 	fi
-	print_complete "获取 Host IP "
+	#print_complete "获取 Host IP "
 }
 #-----------------------------------------------------------------------------#
 # 设置 current Host Domain 
@@ -2239,7 +2239,7 @@ function set_current_uuid {
 	if [[ -f "$HOME/.myHostUUID" ]]; then
 		currentUUID=$(cat $HOME/.myHostUUID)
 	else
-		print_info "$HOME/.myHostUUID"
+		#print_info "$HOME/.myHostUUID"
 		local tempUUID
 		tempUUID=$(cat /proc/sys/kernel/random/uuid)
 		cat <<EOF >$HOME/.myHostUUID
@@ -2247,7 +2247,7 @@ ${tempUUID}
 EOF
 	currentUUID=$(cat $HOME/.myHostUUID)
 	fi
-	print_complete "设置 current UUID "
+	#print_complete "设置 current UUID "
 }
 #-----------------------------------------------------------------------------#
 # 生成 clash -> account 配置文件 
