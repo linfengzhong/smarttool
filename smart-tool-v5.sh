@@ -484,6 +484,9 @@ function install_apache_httpd {
 
 	if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
 			print_info "安装进行中ing "
+			#
+			# 待开发
+			#
 	fi
 
 
@@ -641,11 +644,12 @@ function git_clone_smarttool () {
 }
 #-----------------------------------------------------------------------------#
 # 同步下载Git文件夹
+#-----------------------------------------------------------------------------#
 function github_pull_smarttool () {
 	echoContent yellow " ---> ToolBox"
 	print_start "下载 -> Local ToolBox Repo "
 	cd $GITHUB_REPO_TOOLBOX
-	sudo git pull
+	git pull
 	print_complete "下载 -> Local ToolBox Repo "
 
 	echoContent green "同步下载 smart-tool-v5.sh 到根目录"
@@ -656,17 +660,19 @@ function github_pull_smarttool () {
 }
 #-----------------------------------------------------------------------------#
 # 同步上传Git文件夹
+#-----------------------------------------------------------------------------#
 function github_push_smarttool () {
 	echoContent yellow " ---> ToolBox"
 	print_start "上传ToolBox -> GitHub "
 	cd $GITHUB_REPO_TOOLBOX
-	sudo git add .
-	sudo git commit -m "${myDate} fix"
-	sudo git push
+	git add .
+	git commit -m "${myDate} fix"
+	git push
 	print_complete "上传ToolBox -> GitHub "
 }
 #-----------------------------------------------------------------------------#
 # Git clone logserver.git
+#-----------------------------------------------------------------------------#
 function git_clone_logserver () {
 	print_start "Git clone logserver "
 	if [[ -d "$HOME/git/logserver" ]];then
@@ -689,6 +695,7 @@ function git_clone_logserver () {
 }
 #-----------------------------------------------------------------------------#
 # 同步下载Git文件夹
+#-----------------------------------------------------------------------------#
 function github_pull_logserver () {
 	echoContent yellow " ---> logserver"
 	print_start "下载 -> Local logserver Repo "
@@ -699,6 +706,7 @@ function github_pull_logserver () {
 }
 #-----------------------------------------------------------------------------#
 # 同步上传Git文件夹
+#-----------------------------------------------------------------------------#
 function github_push_logserver () {
 	echoContent yellow " ---> logserver"
 	print_start "上传logserver -> GitHub "
@@ -710,6 +718,7 @@ function github_push_logserver () {
 }
 #-----------------------------------------------------------------------------#
 # 检查系统
+#-----------------------------------------------------------------------------#
 function checkSystem() {
 	if [[ -n $(find /etc -name "rocky-release") ]] || grep </proc/version -q -i "rockylinux"; then
 		mkdir -p /etc/yum.repos.d
@@ -777,6 +786,7 @@ function checkSystem() {
 }
 #-----------------------------------------------------------------------------#
 # Generate CA
+#-----------------------------------------------------------------------------#
 function generate_ca () {
 	print_start "生成网站证书 "
 	print_info "默认域名: $currentHost"	
@@ -827,6 +837,7 @@ function generate_ca () {
 }
 #-----------------------------------------------------------------------------#
 # 更新证书
+#-----------------------------------------------------------------------------#
 function renewalTLS() {
 	print_start "更新证书 "
 	if [[ -d "$HOME/.acme.sh/${currentHost}" ]] && [[ -f "$HOME/.acme.sh/${currentHost}/${currentHost}.key" ]] && [[ -f "$HOME/.acme.sh/${currentHost}/${currentHost}.cer" ]]; then
@@ -862,6 +873,7 @@ function renewalTLS() {
 }
 #-----------------------------------------------------------------------------#
 # 查看TLS证书的状态
+#-----------------------------------------------------------------------------#
 function checkTLStatus() {
 	print_info "当前域名: ${currentHost}"
 	if [[ -n "$1" ]]; then
@@ -885,6 +897,7 @@ function checkTLStatus() {
 }
 #-----------------------------------------------------------------------------#
 # 定时任务更新tls证书
+#-----------------------------------------------------------------------------#
 function installCronTLS() {
 	echoContent skyBlue "添加定时维护证书"
 	crontab -l >/etc/fuckGFW/backup_crontab.cron
@@ -900,6 +913,7 @@ function installCronTLS() {
 #		checkTLStatus "${tlsDomain}"
 #-----------------------------------------------------------------------------#
 # 脚本快捷方式
+#-----------------------------------------------------------------------------#
 function aliasInstall() {
 	if [[ -f "$HOME/smart-tool-v5.sh" ]] && [[ -d "/etc/smart-tool" ]] && grep <$HOME/smart-tool-v5.sh -q "Author: Linfeng Zhong (Fred)"; then
 		mv "$HOME/smart-tool-v5.sh" /etc/smart-tool/smart-tool-v5.sh
@@ -917,6 +931,7 @@ function aliasInstall() {
 }
 #-----------------------------------------------------------------------------#
 # 更新脚本
+#-----------------------------------------------------------------------------#
 function updateSmartTool() {
 	rm -rf /etc/smart-tool/smart-tool-v5.sh
 	echoContent skyBlue "开始下载： "
@@ -940,6 +955,7 @@ function updateSmartTool() {
 }
 #-----------------------------------------------------------------------------#
 # 初始化安装目录
+#-----------------------------------------------------------------------------#
 function mkdirTools() {
 	mkdir -p /etc/smart-tool
 
@@ -963,23 +979,24 @@ function mkdirTools() {
 	mkdir -p /etc/fuckGFW/nagios
 #	mkdir -p /etc/systemd/system/
 #	mkdir -p /tmp/fuckGFW-tls/
-
 }
-
 #-----------------------------------------------------------------------------#
 # Show IP
+#-----------------------------------------------------------------------------#
 function show_ip () {
 	# local zIP=$(curl -s https://ipinfo.io/ip)
 	print_info "服务器外部 IP: ${currentIP} "
 }
 #-----------------------------------------------------------------------------#
 # Generate UUID
+#-----------------------------------------------------------------------------#
 function generate_uuid () {
 	local zUUID=$(cat /proc/sys/kernel/random/uuid)
 	print_info "随机生成 UUID: $zUUID "
 }
 #-----------------------------------------------------------------------------#
 # Set timezone
+#-----------------------------------------------------------------------------#
 function set_timezone () {
 	print_start "设置时区： Asia/Shanghai "
 	timedatectl set-timezone Asia/Shanghai
@@ -991,6 +1008,7 @@ function set_timezone () {
 # Security-Enhanced Linux
 # This guide is based on SELinux being disabled or in permissive mode. 
 # Steps to do this are as follows.
+#-----------------------------------------------------------------------------#
 function turn_off_selinux () {
 	print_start "配置 Linux Rocky 8.4 / CentOS 8 服务器"
 	sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
@@ -1021,6 +1039,7 @@ function turn_off_selinux () {
 # 安装工具包
 #-----------------------------------------------------------------------------#
 # 定时任务检查证书
+#-----------------------------------------------------------------------------#
 cronRenewTLS() {
 	if [[ "${renewTLS}" == "RenewTLS" ]]; then
 		renewalTLS
@@ -1029,6 +1048,7 @@ cronRenewTLS() {
 }
 #-----------------------------------------------------------------------------#
 # 生成 Nginx 配置文件
+#-----------------------------------------------------------------------------#
 function generate_nginx_conf {
 	# /etc/fuckGFW/nginx/conf
 	print_start "生成 NGINX 配置文件 "
@@ -1065,6 +1085,7 @@ EOF
 
 #-----------------------------------------------------------------------------#
 # 生成 xray 配置文件
+#-----------------------------------------------------------------------------#
 function generate_xray_conf {
 	# https://xtls.github.io/config/
 	# /etc/fuckGFW/xray
@@ -1200,6 +1221,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 trojan-go 配置文件
+#-----------------------------------------------------------------------------#
 function generate_trojan_go_conf {
 	# https://p4gefau1t.github.io/trojan-go/basic/full-config/
 	# /etc/fuckGFW/trojan-go
@@ -1247,6 +1269,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 v2ray 配置文件
+#-----------------------------------------------------------------------------#
 function generate_v2ray_conf {
 	# https://www.v2fly.org/config/overview.html
 	# /etc/fuckGFW/v2ray
@@ -1328,6 +1351,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 prometheus 配置文件
+#-----------------------------------------------------------------------------#
 function generate_prometheus_conf {
 	# https://www.v2fly.org/config/overview.html
 	# /etc/fuckGFW/v2ray
@@ -1378,6 +1402,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 grafana.ini 配置文件
+#-----------------------------------------------------------------------------#
 function generate_grafana_ini {
 	print_start "生成 grafana.ini 配置文件 "
 	print_info "copy from GitHub to /etc/fuckGFW/grafana/grafana.ini"
@@ -1387,6 +1412,7 @@ function generate_grafana_ini {
 }
 #-----------------------------------------------------------------------------#
 # 生成 docker-compose.yml 配置文件
+#-----------------------------------------------------------------------------#
 function generate_docker_compose_yml {
 	print_start "生成 docker-compose.yml 配置文件 "
 	print_info "/etc/fuckGFW/docker/${currentHost}/docker-compose.yml"
@@ -1603,6 +1629,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 docker-compose.yml 配置文件
+#-----------------------------------------------------------------------------#
 function generate_docker_compose_yml_lite {
 	print_start "生成 docker-compose.yml lite 配置文件 "
 	print_info "/etc/fuckGFW/docker/${currentHost}/docker-compose.yml"
@@ -1657,6 +1684,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 查看 Nginx 配置文件
+#-----------------------------------------------------------------------------#
 function show_nginx_conf {
 	print_start "查看 Nginx 配置文件 "
 	print_info "/etc/fuckGFW/nginx/conf.d/${currentHost}.conf"
@@ -1665,6 +1693,7 @@ function show_nginx_conf {
 }
 #-----------------------------------------------------------------------------#
 # 查看 xray 配置文件
+#-----------------------------------------------------------------------------#
 function show_xray_conf {
 	print_start "查看 xray 配置文件 "
 	print_info "/etc/fuckGFW/xray/config.json"
@@ -1673,6 +1702,7 @@ function show_xray_conf {
 }
 #-----------------------------------------------------------------------------#
 # 查看 trojan-go 配置文件
+#-----------------------------------------------------------------------------#
 function show_trojan_go_conf {
 	print_start "查看 trojan-go 配置文件 "
 	print_info "/etc/fuckGFW/trojan-go/config.json"
@@ -1681,6 +1711,7 @@ function show_trojan_go_conf {
 }
 #-----------------------------------------------------------------------------#
 # 查看 v2ray 配置文件
+#-----------------------------------------------------------------------------#
 function show_v2ray_conf {
 	print_start "查看 v2ray 配置文件 "
 	print_info "/etc/fuckGFW/v2ray/config.json"
@@ -1689,6 +1720,7 @@ function show_v2ray_conf {
 }
 #-----------------------------------------------------------------------------#
 # 查看 docker-compose.yml 配置文件
+#-----------------------------------------------------------------------------#
 function show_docker_compose_yml {
 	print_start "查看 docker-compose.yml 配置文件 "
 	print_info "/etc/fuckGFW/docker/${currentHost}/docker-compose.yml"
@@ -1697,6 +1729,7 @@ function show_docker_compose_yml {
 }
 #-----------------------------------------------------------------------------#
 # 查看 prometheus 配置文件
+#-----------------------------------------------------------------------------#
 function show_prometheus_conf {
 	print_start "生成 prometheus 配置文件 "
 	print_info "/etc/fuckGFW/prometheus/prometheus.yml"
@@ -1713,6 +1746,7 @@ function show_grafana_ini {
 }
 #-----------------------------------------------------------------------------#
 # generate access.log & error.log for nginx
+#-----------------------------------------------------------------------------#
 function generate_access_log_error_log_nginx {
 	print_start "Generate access.log & error.log for nginx "
 	if [[ -f "$HOME/git/logserver/${currentHost}/nginx/access.log" ]];then
@@ -1732,6 +1766,7 @@ function generate_access_log_error_log_nginx {
 }
 #-----------------------------------------------------------------------------#
 # generate access.log & error.log for trojan-go
+#-----------------------------------------------------------------------------#
 function generate_access_log_error_log_trojan_go {
 	print_start "Generate error.log for trojan-go "
 	if [[ -f "$HOME/git/logserver/${currentHost}/trojan-go/error.log" ]];then
@@ -1744,6 +1779,7 @@ function generate_access_log_error_log_trojan_go {
 }
 #-----------------------------------------------------------------------------#
 # generate access.log & error.log for v2ray
+#-----------------------------------------------------------------------------#
 function generate_access_log_error_log_v2ray {
 	print_start "Generate access.log & error.log for v2ray "
 	if [[ -f "$HOME/git/logserver/${currentHost}/v2ray/access.log" ]];then
@@ -1763,6 +1799,7 @@ function generate_access_log_error_log_v2ray {
 }
 #-----------------------------------------------------------------------------#
 # generate access.log & error.log for xray
+#-----------------------------------------------------------------------------#
 function generate_access_log_error_log_xray {
 	print_start "Generate access.log & error.log for xray "
 	if [[ -f "$HOME/git/logserver/${currentHost}/xray/access.log" ]];then
@@ -1782,6 +1819,7 @@ function generate_access_log_error_log_xray {
 }
 #-----------------------------------------------------------------------------#
 # generate access.log & error.log
+#-----------------------------------------------------------------------------#
 function generate_access_log_error_log {
 	print_start "Generate access.log & error.log for nginx trojan-go v2ray xray "
 	if [[ -f "$HOME/git/logserver/${currentHost}/nginx/access.log" ]];then
@@ -1837,6 +1875,7 @@ function generate_access_log_error_log {
 }
 #-----------------------------------------------------------------------------#
 # show access.log & error.log
+#-----------------------------------------------------------------------------#
 function show_error_log {
 	print_start "Show error.log for nginx trojan-go v2ray xray "
 	echoContent yellow " ---> nginx"
@@ -1851,6 +1890,7 @@ function show_error_log {
 }
 #-----------------------------------------------------------------------------#
 # show error.log for nginx
+#-----------------------------------------------------------------------------#
 function show_error_log_nginx {
 	print_start "Show error.log for nginx "
 	echoContent yellow " ---> nginx"
@@ -1859,6 +1899,7 @@ function show_error_log_nginx {
 }
 #-----------------------------------------------------------------------------#
 # show access.log for nginx
+#-----------------------------------------------------------------------------#
 function show_access_log_nginx {
 	print_start "Show access.log for nginx "
 	echoContent yellow " ---> nginx"
@@ -1867,6 +1908,7 @@ function show_access_log_nginx {
 }
 #-----------------------------------------------------------------------------#
 # show error.log for trojan-go
+#-----------------------------------------------------------------------------#
 function show_error_log_trojan_go {
 	print_start "Show error.log for trojan-go "
 	echoContent yellow " ---> trojan-go"
@@ -1875,6 +1917,7 @@ function show_error_log_trojan_go {
 }
 #-----------------------------------------------------------------------------#
 # show error.log for v2ray
+#-----------------------------------------------------------------------------#
 function show_error_log_v2ray {
 	print_start "Show error.log for v2ray "
 	echoContent yellow " ---> v2ray"
@@ -1883,6 +1926,7 @@ function show_error_log_v2ray {
 }
 #-----------------------------------------------------------------------------#
 # show access.log for v2ray
+#-----------------------------------------------------------------------------#
 function show_access_log_v2ray {
 	print_start "Show access.log for v2ray "
 	echoContent yellow " ---> v2ray"
@@ -1891,6 +1935,7 @@ function show_access_log_v2ray {
 }
 #-----------------------------------------------------------------------------#
 # show error.log for xray
+#-----------------------------------------------------------------------------#
 function show_error_log_xray {
 	print_start "Show error.log for xray "
 	echoContent yellow " ---> xray"
@@ -1899,6 +1944,7 @@ function show_error_log_xray {
 }
 #-----------------------------------------------------------------------------#
 # show access.log for xray
+#-----------------------------------------------------------------------------#
 function show_access_log_xray {
 	print_start "Show access.log for xray "
 	echoContent yellow " ---> xray"
@@ -1907,6 +1953,7 @@ function show_access_log_xray {
 }
 #-----------------------------------------------------------------------------#
 # Website
+#-----------------------------------------------------------------------------#
 function generate_fake_website {
 #	/etc/fuckGFW/website
 #	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html1.zip
@@ -1939,6 +1986,7 @@ function generate_fake_website {
 }
 #-----------------------------------------------------------------------------#
 # Upload logs & configuration & dynamic data
+#-----------------------------------------------------------------------------#
 function upload_logs_configuration_dynamic_data () {
 	#print_info "更新日志、配置文件、动态数据到GitHub "
 	github_pull_logserver
@@ -1947,6 +1995,7 @@ function upload_logs_configuration_dynamic_data () {
 }
 #-----------------------------------------------------------------------------#
 # 初始化 webmin SSL
+#-----------------------------------------------------------------------------#
 function init_webmin_ssl {
 	print_start "初始化webmin SSL证书 "
 	
@@ -2000,6 +2049,7 @@ function init_webmin_ssl {
 }
 #-----------------------------------------------------------------------------#
 # Disable WebMin SSL
+#-----------------------------------------------------------------------------#
 function disable_webmin_ssl {
 	print_start "Disable WebMin SSL"
 
@@ -2013,6 +2063,7 @@ function disable_webmin_ssl {
 }
 #-----------------------------------------------------------------------------#
 # 修改 webmin 端口：10000 -> 9999 
+#-----------------------------------------------------------------------------#
 function init_webmin_port_9999 {
 	print_start "修改webmin端口为 9999"
 
@@ -2027,6 +2078,7 @@ function init_webmin_port_9999 {
 }
 #-----------------------------------------------------------------------------#
 # 重启 webmin 服务
+#-----------------------------------------------------------------------------#
 function restart_webmin_service {
 	print_info "重启 webmin.service "
 	service webmin restart
@@ -2036,6 +2088,7 @@ function restart_webmin_service {
 }
 #-----------------------------------------------------------------------------#
 # 重启 webmin 服务
+#-----------------------------------------------------------------------------#
 function uninstall_webmin {
 	print_info "卸载 Webmin "
 
@@ -2064,6 +2117,7 @@ function uninstall_webmin {
 }
 #-----------------------------------------------------------------------------#
 # 清理域名
+#-----------------------------------------------------------------------------#
 function clear_myHostDomain {
 	# print_start "重新初始化 服务器域名 "
 	rm -f $HOME/.myHostDomain
@@ -2072,6 +2126,7 @@ function clear_myHostDomain {
 }
 #-----------------------------------------------------------------------------#
 # 清理UUID
+#-----------------------------------------------------------------------------#
 function clear_currentUUID {
 	# print_start "重新初始化 服务器域名 "
 	rm -f $HOME/.currentUUID
@@ -2080,6 +2135,7 @@ function clear_currentUUID {
 }
 #-----------------------------------------------------------------------------#
 # 设置 current Host Domain 
+#-----------------------------------------------------------------------------#
 function set_current_host_domain {
 	print_start "设置 current Host Domain "
 	if [[ -f "$HOME/.myHostDomain" ]]; then
@@ -2113,6 +2169,7 @@ function set_current_host_domain {
 }
 #-----------------------------------------------------------------------------#
 # 设置 current UUID 
+#-----------------------------------------------------------------------------#
 function set_current_uuid {
 	print_start "设置 current UUID "
 	if [[ -f "$HOME/.currentUUID" ]]; then
@@ -2130,6 +2187,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 生成 clash -> account 配置文件 
+#-----------------------------------------------------------------------------#
 function generate_vmess_trojan_account {
 	print_start "生成 clash -> account 配置文件 "
 	print_info "/etc/fuckGFW/clash/config.yml"
@@ -2178,6 +2236,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 安装standalone xray
+#-----------------------------------------------------------------------------#
 function install_standalone_xray() {
 	checkCPUVendor
 	installXray
@@ -2189,6 +2248,7 @@ function install_standalone_xray() {
 }
 #-----------------------------------------------------------------------------#
 # 检查CPU提供商
+#-----------------------------------------------------------------------------#
 function checkCPUVendor() {
 	if [[ -n $(which uname) ]]; then
 		if [[ "$(uname)" == "Linux" ]];then
@@ -2218,6 +2278,7 @@ function checkCPUVendor() {
 }
 #-----------------------------------------------------------------------------#
 # 安装xray
+#-----------------------------------------------------------------------------#
 function installXray() {
 	print_start "安装standalone Xray"
 	coreInstallType="2"
@@ -2249,6 +2310,7 @@ function installXray() {
 }
 #-----------------------------------------------------------------------------#
 # Xray开机自启
+#-----------------------------------------------------------------------------#
 function installXrayService() {
 	print_info "配置Xray开机自启"
 	if [[ -n $(find /bin /usr/bin -name "systemctl") ]]; then
@@ -2282,6 +2344,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 初始化Xray 配置文件
+#-----------------------------------------------------------------------------#
 function initXrayConfig() {
 	print_start "初始化Xray配置 "
 
@@ -2608,6 +2671,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 操作xray
+#-----------------------------------------------------------------------------#
 function handleXray() {
 	if [[ -n $(find /bin /usr/bin -name "systemctl") ]] && ls /etc/systemd/system/ | grep -q xray.service; then
 		if [[ -z $(pgrep -f "xray/xray") ]] && [[ "$1" == "start" ]]; then
@@ -2652,6 +2716,7 @@ function checkGFWStatue() {
 }
 #-----------------------------------------------------------------------------#
 # 更新Xray
+#-----------------------------------------------------------------------------#
 function update_Xray() {
 	if [[ -z "${coreInstallType}" ]]; then
 		if [[ -n "$1" ]]; then
@@ -2717,11 +2782,13 @@ function update_Xray() {
 }
 #-----------------------------------------------------------------------------#
 # 安装 xray_OneKey
+#-----------------------------------------------------------------------------#
 function install_xray_onekey {
 	wget -N --no-check-certificate -q -O xinstall.sh "https://raw.githubusercontent.com/wulabing/Xray_onekey/main/install.sh" && chmod +x xinstall.sh && bash xinstall.sh
 }
 #-----------------------------------------------------------------------------#
 # 安装 v2-ui
+#-----------------------------------------------------------------------------#
 function install_v2_ui {
 	bash <(curl -Ls https://blog.sprov.xyz/v2-ui.sh)
 }
@@ -2732,6 +2799,7 @@ function install_x_ui {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Check MyServers Folder
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_check_myservers_folder {
 	print_info "Step 1: Nagios 自定义文件夹 /usr/local/nagios/etc/objects/myservers "
 	mkdir -p /usr/local/nagios/etc/objects/myservers
@@ -2740,6 +2808,7 @@ function customize_nagios_server_check_myservers_folder {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Nagios.cfg
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_nagios_cfg {
 	print_info "Step 2-1: Nagios 主配置文件集 /usr/local/nagios/etc/nagios.cfg"
 	if [[ ! -f "/usr/local/nagios/etc/nagios.cfg" ]]; then
@@ -2783,6 +2852,7 @@ function customize_nagios_server_nagios_cfg {
 # 定制 Nagios Server Myservers two
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Myservers Three
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_three {
 	print_info "Step 3: Nagios 自定义文件夹 独立服务器配置文件"
 
@@ -2869,6 +2939,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Host
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_host {
 	# print_info "Step 3: Nagios 自定义文件夹 独立服务器配置文件"
 	# NagiosClientDomain1
@@ -2960,6 +3031,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Services
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_services {
 	print_info "Step 4: Nagios 自定义服务集 /usr/local/nagios/etc/objects/myservers/services.cfg"
 	cat <<EOF > /usr/local/nagios/etc/objects/myservers/services.cfg
@@ -3022,6 +3094,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Host Group
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_host_group {
 	print_info "Step 5: Nagios 自定义主机组 /usr/local/nagios/etc/objects/myservers/host_group.cfg"
 
@@ -3078,6 +3151,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Service Group
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_service_group {
 	print_info "Step 6: Nagios 自定义服务组 /usr/local/nagios/etc/objects/myservers/service_group.cfg"
 
@@ -3144,6 +3218,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Command
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_command {
 	print_info "Step 7: Nagios 自定义命令集 /usr/local/nagios/etc/objects/myservers/mycommands.cfg"
 	cat <<EOF > /usr/local/nagios/etc/objects/myservers/mycommands.cfg
@@ -3327,6 +3402,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 /etc/hosts
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_hosts_ip {
 	print_info "Step 8: 编辑 /etc/hosts "
 	if cat /etc/hosts | grep ${NagiosClientDomain1} >/dev/null; then
@@ -3340,6 +3416,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server Myservers Show
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_myservers_show {
 	print_info "Step 9: 服务器列表"
 	print_info "#------------------------------# "
@@ -3376,6 +3453,7 @@ function customize_nagios_server_myservers_show {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server 重启
+#-----------------------------------------------------------------------------#
 function customize_nagios_server_restart {
 	print_info "Step 10: 重启 Nagios 服务"
 	systemctl restart nagios
@@ -3383,6 +3461,7 @@ function customize_nagios_server_restart {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Server
+#-----------------------------------------------------------------------------#
 function customize_nagios_server {
 	print_start "定制 Nagios Server "
 
@@ -3403,6 +3482,7 @@ function customize_nagios_server {
 
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Client NRPE.cfg
+#-----------------------------------------------------------------------------#
 function customize_nagios_client_nrpe_cfg {
 	print_info "Step 1: Nagios 客户端配置文件： /usr/local/nagios/etc/nrpe.cfg "
 	if [[ ! -f "/usr/local/nagios/etc/nrpe.cfg" ]]; then
@@ -3496,6 +3576,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Client Copy Libexec
+#-----------------------------------------------------------------------------#
 function customize_nagios_client_copy_libexec {
 
 	# check_ssl_certificate
@@ -3544,6 +3625,7 @@ function customize_nagios_client_copy_libexec {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Client Restart
+#-----------------------------------------------------------------------------#
 function customize_nagios_client_restart {
 	print_info "重启NRPE服务"
 	systemctl restart nrpe
@@ -3551,6 +3633,7 @@ function customize_nagios_client_restart {
 }
 #-----------------------------------------------------------------------------#
 # 定制 Nagios Client
+#-----------------------------------------------------------------------------#
 function customize_nagios_client {
 	print_start "定制 Nagios Client "
 
@@ -3562,6 +3645,7 @@ function customize_nagios_client {
 }
 #-----------------------------------------------------------------------------#
 # 激活 Nagios 黑暗模式 
+#-----------------------------------------------------------------------------#
 function enable_nagios_dark_mode {
 	print_start "激活 Nagios 黑暗模式 "
 	print_info "Step 1: 备份源文件 "
@@ -3596,6 +3680,7 @@ function enable_nagios_dark_mode {
 }
 #-----------------------------------------------------------------------------#
 # 恢复 Nagios 普通模式 
+#-----------------------------------------------------------------------------#
 function enable_nagios_normal_mode {
 	print_start "恢复 Nagios 普通模式 "
 	print_info "Step 1: 复制普通模式 "
@@ -3610,6 +3695,7 @@ function enable_nagios_normal_mode {
 }
 #-----------------------------------------------------------------------------#
 # 激活 apache httpd SSL
+#-----------------------------------------------------------------------------#
 function enable_apache_httpd_ssl {
 	print_start "激活 apache httpd SSL - Port: 8443"
 	if [[ -f "/etc/httpd/conf.d/ssl.conf" ]]; then
@@ -3687,6 +3773,7 @@ EOF
 }
 #-----------------------------------------------------------------------------#
 # 安装 nagios server
+#-----------------------------------------------------------------------------#
 function install_nagios_server {
 	print_start "安装 Nagios Core"
 	nagios_status_running=$(systemctl status nagios | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
@@ -3806,6 +3893,7 @@ function install_nagios_server {
 }
 #-----------------------------------------------------------------------------#
 # 安装 nagios plugins
+#-----------------------------------------------------------------------------#
 function install_nagios_plugins {
 	print_start "安装 Nagios Plugins 2.3.3"
 	if [[ -f "/usr/local/nagios/libexec/check_cpu_stats.sh" ]]; then
@@ -3853,6 +3941,7 @@ function install_nagios_plugins {
 }
 #-----------------------------------------------------------------------------#
 # 安装 nagios nrpe
+#-----------------------------------------------------------------------------#
 function install_nagios_nrpe {
 	print_start "安装 Nagios NRPE"
 	# NRPE - Nagios Remote Plugin Executor
@@ -3918,6 +4007,7 @@ function install_nagios_nrpe {
 }
 #-----------------------------------------------------------------------------#
 # 安装 nagios ncpa
+#-----------------------------------------------------------------------------#
 function install_nagios_ncpa {
 	print_start "安装 Nagios NCPA "
 	ncpa_status_running=$(systemctl status ncpa_listener.service | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
@@ -3945,6 +4035,7 @@ function install_nagios_ncpa {
 }
 #-----------------------------------------------------------------------------#
 # 卸载 nagios ncpa
+#-----------------------------------------------------------------------------#
 function uninstall_nagios_ncpa {
 	# Nagios Cross-Platform Agent
 	print_start "卸载 Nagios NCPA "
@@ -3956,6 +4047,7 @@ function uninstall_nagios_ncpa {
 }
 #-----------------------------------------------------------------------------#
 # 安装 & 运行 Prometheus container - Port: 9090 
+#-----------------------------------------------------------------------------#
 function install_exec_prometheus {
 
 	docker run -d \
@@ -3967,6 +4059,7 @@ function install_exec_prometheus {
 }
 #-----------------------------------------------------------------------------#
 # 安装 & 运行 Node Exporter container - Port: 9100 
+#-----------------------------------------------------------------------------#
 function install_exec_node_exporter {
 
 	docker run -d \
@@ -3980,6 +4073,7 @@ function install_exec_node_exporter {
 }
 #-----------------------------------------------------------------------------#
 # 安装 Node Exporter linux 版本
+#-----------------------------------------------------------------------------#
 function install_exec_node_exporter_linux {
 	print_start "安装 Node Exporter linux 版本 "
 	if [[ -f "/usr/sbin/node_exporter" ]]; then
@@ -4028,6 +4122,7 @@ function install_exec_node_exporter_linux {
 }
 #-----------------------------------------------------------------------------#
 # 卸载 Node Exporter linux 版本
+#-----------------------------------------------------------------------------#
 function uninstall_exec_node_exporter_linux {
 	print_start "卸载 Node Exporter linux 版本 "
 
@@ -4046,6 +4141,7 @@ function uninstall_exec_node_exporter_linux {
 }
 #-----------------------------------------------------------------------------#
 # 安装 & 运行 Grafana container - Port: 3000 
+#-----------------------------------------------------------------------------#
 function install_exec_grafana {
 	
 	docker run -d \
@@ -4071,18 +4167,21 @@ function install_exec_grafana {
 }
 #-----------------------------------------------------------------------------#
 # 停止 & 删除 Prometheus
+#-----------------------------------------------------------------------------#
 function stop_remove_prometheus {
 	docker container stop prometheus-standalone
 	docker container rm -f prometheus-standalone
 }
 #-----------------------------------------------------------------------------#
 # 停止 & 删除 Node Exporter container
+#-----------------------------------------------------------------------------#
 function stop_remove_node_exporter {
 	docker container stop node-exporter
 	docker container rm -f node-exporter
 }
 #-----------------------------------------------------------------------------#
 # 停止 & 删除 Grafana container 
+#-----------------------------------------------------------------------------#
 function stop_remove_grafana {
 	docker container stop grafana-standalone
 	docker container rm -f grafana-standalone
@@ -4163,6 +4262,7 @@ function git_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 安装其他软件菜单
+#-----------------------------------------------------------------------------#
 function install_standalone_software_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4213,6 +4313,7 @@ function install_standalone_software_menu() {
 }
 #-----------------------------------------------------------------------------#
 # Grafana 菜单
+#-----------------------------------------------------------------------------#
 function grafana_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4277,6 +4378,7 @@ function grafana_menu() {
 }
 #-----------------------------------------------------------------------------#
 # webmin 安装菜单
+#-----------------------------------------------------------------------------#
 function webmin_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4341,6 +4443,7 @@ function webmin_menu() {
 }
 #-----------------------------------------------------------------------------#
 # Nagios 安装菜单
+#-----------------------------------------------------------------------------#
 function nagios_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4444,6 +4547,7 @@ function nagios_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 科学上网菜单
+#-----------------------------------------------------------------------------#
 function science_surfer_internet_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4504,7 +4608,8 @@ function science_surfer_internet_menu() {
 	esac
 }
 #-----------------------------------------------------------------------------#
-# 生成配置文件&Log文件菜单
+# 生成配置文件 & 日志文件菜单
+#-----------------------------------------------------------------------------#
 function generate_conf_log_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4603,6 +4708,7 @@ function generate_conf_log_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 日志菜单
+#-----------------------------------------------------------------------------#
 function log_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4664,6 +4770,7 @@ function log_menu() {
 }
 #-----------------------------------------------------------------------------#
 # 配置菜单
+#-----------------------------------------------------------------------------#
 function conf_menu() {
 	clear
 	cd "$HOME" || exit
@@ -4914,7 +5021,9 @@ function menu() {
 	esac
 }
 
+#-----------------------------------------------------------------------------#
 # 检查指定端口是否开启
+#-----------------------------------------------------------------------------#
 function checkPortStatus()
 {
 	status=`nmap -sS 127.0.0.1 -p $1 | grep open | awk '{print $2}'`
@@ -4925,7 +5034,9 @@ function checkPortStatus()
 			return 1;
 	fi
 }
+#-----------------------------------------------------------------------------#
 # 判断进程是否再运行
+#-----------------------------------------------------------------------------#
 function check_procs_status() {
 	PROC_NAME=$1  
 	ProcNumber=`ps -ef |grep -w $PROC_NAME|grep -v grep|wc -l`  
