@@ -375,6 +375,7 @@ function install_docker_compose () {
 		# https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-aarch64
 		curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
 		chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
+		rm /usr/bin/docker-compose
 		ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
 		docker-compose --version
 		print_info "安装进行中ing "
@@ -920,10 +921,12 @@ function aliasInstall() {
 	if [[ -f "$HOME/smart-tool-v5.sh" ]] && [[ -d "/etc/smart-tool" ]] && grep <$HOME/smart-tool-v5.sh -q "Author: Linfeng Zhong (Fred)"; then
 		mv "$HOME/smart-tool-v5.sh" /etc/smart-tool/smart-tool-v5.sh
 		if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/st" ]]; then
+			rm /usr/bin/st
 			ln -s /etc/smart-tool/smart-tool-v5.sh /usr/bin/st
 			chmod 700 /usr/bin/st
 			rm -rf "$HOME/smart-tool-v5.sh"
 		elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/st" ]]; then
+			rm /usr/sbin/st
 			ln -s /etc/smart-tool/smart-tool-v5.sh /usr/sbin/st
 			chmod 700 /usr/sbin/st
 			rm -rf "$HOME/smart-tool-v5.sh"
@@ -943,10 +946,12 @@ EOF
 	chmod 700 ~/uu
 	mv ~/uu /etc/smart-tool/uu
 	if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
+		rm /usr/bin/uu
 		ln -s /etc/smart-tool/uu /usr/bin/uu
 		chmod 700 /usr/bin/uu
 		rm -rf "$HOME/uu"
 	elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/uu" ]]; then
+		rm /usr/sbin/uu
 		ln -s /etc/smart-tool/uu /usr/sbin/uu
 		chmod 700 /usr/sbin/uu
 		rm -rf "$HOME/uu"
@@ -4092,7 +4097,7 @@ function install_nagios_ncpa {
 
 	print_info "展示 NCPA 配置文件 /usr/local/ncpa/etc/ncpa.cfg"
 	cat /usr/local/ncpa/etc/ncpa.cfg
-	
+	rm /usr/bin/python
 	ln -s /usr/bin/python3 /usr/bin/python >/dev/null 2>&1
 	print_info "访问 https://${currentHost}:5693/"
 
