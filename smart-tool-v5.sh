@@ -339,12 +339,12 @@ function install_docker () {
 		fi
 
 		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
-			$removeType docker docker-engine docker.io containerd runc >/dev/null 2>&1
+			$removeType docker docker-engine docker.io containerd runc
 			rm -f /usr/share/keyrings/docker-archive-keyring.gpg
 			print_complete "1/3 Uninstall old versions of Docker CE "
 
 			# Update the apt package index and install packages to allow apt to use a repository over HTTPS
-			$installType ca-certificates curl gnupg lsb-release >/dev/null 2>&1
+			$installType ca-certificates curl gnupg lsb-release
 			# Add Docker’s official GPG key
 			curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 			# Set up the stable repository
