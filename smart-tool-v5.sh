@@ -2195,7 +2195,7 @@ function get_current_host_IP {
 			fi
 		currentIP=$(cat $HOME/.myHostIP)
 	fi
-	#print_complete "获取 Host IP "
+	print_complete "获取 Host IP "
 }
 #-----------------------------------------------------------------------------#
 # 设置 current Host Domain 
