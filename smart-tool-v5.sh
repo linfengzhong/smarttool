@@ -934,22 +934,22 @@ function aliasInstall() {
 # 更新脚步GIT快捷方式
 #-----------------------------------------------------------------------------#
 function uu_refresh_script() {
-
+	print_start "git pull 方式更新脚本"
 	cat <<EOF >$HOME/uu
 #!/usr/bin/env bash
 cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll && ./smart-tool-v5.sh
 EOF
-		mv ~/uu /etc/smart-tool/uu
-		if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
-			ln -s /etc/smart-tool/uu /usr/bin/uu
-			chmod 700 /usr/bin/uu
-			rm -rf "$HOME/uu"
-		elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/uu" ]]; then
-			ln -s /etc/smart-tool/uu /usr/sbin/uu
-			chmod 700 /usr/sbin/uu
-			rm -rf "$HOME/uu"
-		fi
+	mv ~/uu /etc/smart-tool/uu
+	if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
+		ln -s /etc/smart-tool/uu /usr/bin/uu
+		chmod 700 /usr/bin/uu
+		rm -rf "$HOME/uu"
+	elif [[ -d "/usr/sbin" ]] && [[ ! -f "/usr/sbin/uu" ]]; then
+		ln -s /etc/smart-tool/uu /usr/sbin/uu
+		chmod 700 /usr/sbin/uu
+		rm -rf "$HOME/uu"
 	fi
+	print_complete "git pull 方式更新脚本"
 	echoContent green "快捷方式创建成功，可执行[uu]重新打开脚本"
 }
 #-----------------------------------------------------------------------------#
