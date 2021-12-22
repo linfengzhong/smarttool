@@ -940,6 +940,7 @@ function uu_refresh_script() {
 #!/usr/bin/env bash
 cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ./smart-tool-v5.sh
 EOF
+	chmod 700 ~/uu
 	mv ~/uu /etc/smart-tool/uu
 	if [[ -d "/usr/bin/" ]] && [[ ! -f "/usr/bin/uu" ]]; then
 		ln -s /etc/smart-tool/uu /usr/bin/uu
