@@ -222,7 +222,7 @@ function install_acme () {
 		print_error "acme.sh已经安装，无需重复操作！"
 	else
 		print_info "安装进行中ing "
-		sudo curl -s https://get.acme.sh | sh -s email=$EMAIL >/dev/null 2>&1
+		curl -s https://get.acme.sh | sh -s email=$EMAIL >/dev/null 2>&1
 	fi
 	print_complete "安装 acme.sh "
 }
@@ -331,7 +331,7 @@ function install_docker () {
 			print_complete "1/3 Uninstall old versions of Docker CE "
 			
 			$installType yum-utils >/dev/null 2>&1
-			sudo yum-config-manager \
+			yum-config-manager \
 					--add-repo \
 					https://download.docker.com/linux/centos/docker-ce.repo  >/dev/null 2>&1
 			print_complete "2/3 Set up the repository for Docker "			
@@ -345,18 +345,18 @@ function install_docker () {
 			# Update the apt package index and install packages to allow apt to use a repository over HTTPS
 			$installType ca-certificates curl gnupg lsb-release >/dev/null 2>&1
 			# Add Docker’s official GPG key
-			curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+			curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 			# Set up the stable repository
 			echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 			print_complete "2/3 Set up GPG Key & repository for Docker "
 		fi
 		
 		print_info "安装进行中ing "
 		$installType docker-ce docker-ce-cli containerd.io
-		#sudo systemctl start docker
-		#sudo systemctl enable docker
+		#systemctl start docker
+		#systemctl enable docker
 		print_complete "3/3 Install Docker Engine "
 	fi
 	print_complete "Install Docker CE "
@@ -372,9 +372,9 @@ function install_docker_compose () {
 	else
 		print_info "docker-compose v2.2.2"
 		# https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-aarch64
-		sudo curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
-		sudo chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
-		sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
+		curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
+		chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
+		ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
 		docker-compose --version
 		print_info "安装进行中ing "
 	fi
@@ -701,7 +701,7 @@ function github_pull_logserver () {
 	echoContent yellow " ---> logserver"
 	print_start "下载 -> Local logserver Repo "
 	cd $GITHUB_REPO_LOGSERVER
-	sudo git pull
+	git pull
 	chmod 777 -R $HOME/git/logserver/$currentHost/grafana/lib	
 	print_complete "下载 -> Local logserver Repo "
 }
@@ -712,9 +712,9 @@ function github_push_logserver () {
 	echoContent yellow " ---> logserver"
 	print_start "上传logserver -> GitHub "
 	cd $GITHUB_REPO_LOGSERVER
-	sudo git add .
-	sudo git commit -m "${myDate} sync_all_config_log_data"
-	sudo git push
+	git add .
+	git commit -m "${myDate} sync_all_config_log_data"
+	git push
 	print_complete "上传logserver -> GitHub "
 }
 #-----------------------------------------------------------------------------#
@@ -964,7 +964,7 @@ function updateSmartTool() {
 		wget -c -q -P /etc/smart-tool/ -N --no-check-certificate "https://raw.githubusercontent.com/linfengzhong/smarttool/main/smart-tool-v5.sh"
 	fi
 
-	sudo chmod 700 /etc/smart-tool/smart-tool-v5.sh
+	chmod 700 /etc/smart-tool/smart-tool-v5.sh
 	local newversion=$(cat /etc/smart-tool/smart-tool-v5.sh | grep 'SmartToolVersion=v' | awk -F "[v]" '{print $2}' | tail -n +2 | head -n 1 | awk -F "[\"]" '{print $1}')
 
 	print_info "---> 更新完毕"
@@ -1024,7 +1024,7 @@ function set_timezone () {
 	print_start "设置时区： Asia/Shanghai "
 	timedatectl set-timezone Asia/Shanghai
 	echoContent yellow "[当前时间]  \c"
-	sudo date
+	date
 	print_complete "设置时区： Asia/Shanghai "
 }
 #-----------------------------------------------------------------------------#
@@ -4089,7 +4089,7 @@ function install_nagios_ncpa {
 	print_info "展示 NCPA 配置文件 /usr/local/ncpa/etc/ncpa.cfg"
 	cat /usr/local/ncpa/etc/ncpa.cfg
 	
-	sudo ln -s /usr/bin/python3 /usr/bin/python >/dev/null 2>&1
+	ln -s /usr/bin/python3 /usr/bin/python >/dev/null 2>&1
 	print_info "访问 https://${currentHost}:5693/"
 
 	fi
