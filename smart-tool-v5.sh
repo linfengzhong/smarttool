@@ -776,7 +776,7 @@ function checkSystem() {
 		installType='apt -y install'
 		upgrade="apt -y update"
 		removeType='apt -y remove'
-		echoContent white "Armbian"
+		echoContent white "armbian"
 	fi
 
 	if [[ -z ${release} ]]; then
