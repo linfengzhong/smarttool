@@ -4968,10 +4968,10 @@ function menu() {
 	echoContent yellow "41.generate CA "
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
 	echoContent yellow "0.更新脚本 | 1.git pull方式更新脚本"
-	echoContent yellow "4.显示外部 IP | 5.获取外部 IP "
-	echoContent yellow "6.设置域名 Hostname"
-	echoContent yellow "7.设置时区 Asia / Shanghai "
-	echoContent yellow "8.设置随机 UUID "
+	echoContent yellow "3.设置域名 Host Domain"
+	echoContent yellow "4.设置随机 UUID "
+	echoContent yellow "5.获取外部 IP "
+	echoContent yellow "6.设置时区 Asia / Shanghai "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
 	mkdirTools
@@ -4987,27 +4987,24 @@ function menu() {
 		uu_refresh_script
 		sleep 1
 		;;
+	3)
+		clear_myHostDomain
+		set_current_host_domain
+		;;
 	4)
-		show_ip
+		clear_currentUUID
+		set_current_uuid
+		sleep 1
+		menu
 		;;
 	5)
 		clear_myHostIP
 		get_current_host_IP
 		;;
 	6)
-		clear_myHostDomain
-		set_current_host_domain
-		;;
-	7)
 		set_timezone
 		sleep 1
-		st
-		;;
-	8)
-		clear_currentUUID
-		set_current_uuid
-		sleep 1
-		st
+		menu
 		;;
 	9)
 		execBpytop
