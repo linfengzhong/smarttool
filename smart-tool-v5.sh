@@ -2248,6 +2248,7 @@ ${tempUUID}
 EOF
 	currentUUID=$(cat $HOME/.myHostUUID)
 	fi
+	print_error "${currentUUID}"
 	print_complete "设置 current UUID "
 }
 #-----------------------------------------------------------------------------#
