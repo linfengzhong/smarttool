@@ -110,7 +110,8 @@ function inital_smart_tool() {
 	# 集成更新证书逻辑不再使用单独的脚本--RenewTLS
 	renewTLS=$1
 
-	currentIP=$(curl -s https://ipinfo.io/ip)
+	# IP地址
+	currentIP=
 
 	if [[ -f "$HOME/.currentUUID" ]]; then
 		currentUUID=$(cat $HOME/.currentUUID)
@@ -2116,6 +2117,15 @@ function uninstall_webmin {
 	print_complete "卸载 webmin "
 }
 #-----------------------------------------------------------------------------#
+# 清理IP
+#-----------------------------------------------------------------------------#
+function clear_myHostIP {
+	# print_start "重新初始化 服务器IP "
+	rm -f $HOME/.myHostIP
+	# print_info "清理完成"
+	# print_complete "重新初始化 服务器IP "
+}
+#-----------------------------------------------------------------------------#
 # 清理域名
 #-----------------------------------------------------------------------------#
 function clear_myHostDomain {
@@ -2132,6 +2142,36 @@ function clear_currentUUID {
 	rm -f $HOME/.currentUUID
 	# print_info "清理完成"
 	# print_complete "重新初始化 服务器域名 "
+}
+#-----------------------------------------------------------------------------#
+# 获取 current Host IP 
+#-----------------------------------------------------------------------------#
+function get_current_host_IP {
+	print_start "获取 Host IP "
+	if [[ -f "$HOME/.myHostIP" ]]; then
+		print_error "已获取服务器IP，无需重复设置！"
+		currentIP=$(cat $HOME/.myHostIP)
+	else
+		print_info "初始化 SmartTool v5 "
+		print_info "$HOME/.myHostIP "
+		read -r -p "请设置服务器IP：" inputHostIP
+			if [ $inputHostIP ]; then
+				print_info "----- 服务器域名 ----"
+				print_error "${inputHostIP}"
+				print_info "----- 服务器域名 ----"
+				echo "${inputHostIP}" > $HOME/.myHostIP
+				currentIP=${inputHostIP}
+			else
+				currentIP=$(curl -s https://ipinfo.io/ip)
+				print_error "未输入域名，使用默认IP: ${currentIP}"
+				print_info "----- 默认服务器IP ----"
+				print_error "${currentIP}"
+				print_info "----- 默认服务器IP ----"
+				echo "${defaultHost}" > $HOME/.myHostIP
+			fi
+		currentIP=$(cat $HOME/.myHostIP)
+	fi
+	print_complete "获取 Host IP "
 }
 #-----------------------------------------------------------------------------#
 # 设置 current Host Domain 
@@ -4886,8 +4926,8 @@ function menu() {
 	echoContent yellow "22.Nagios 监控  - port: 8443 [Sub Menu]"
 	echoContent yellow "23.Grafana 监控 - port: 3000 [Sub Menu]"
 	echoContent yellow "24.Webmin 管理  - port: 10000[Sub Menu]"
-	echoContent yellow "25.Git 版本控制 - port: 80 / 443 [Sub Menu] "
-	echoContent yellow "26.安装单机     - port: 7080 / 8080 / 8443 [Sub Menu] "
+	echoContent yellow "25.Git 版本控制 - port: 80 / 443 [Sub Menu]"
+	echoContent yellow "26.安装单机     - port: 7080 / 8080 / 8443 [Sub Menu]"
 	echoContent skyBlue "---------------------------容器相关-------------------------------"
 	echoContent yellow "30.docker one key"
 	echoContent yellow "31.docker-compose up"
@@ -4905,8 +4945,9 @@ function menu() {
 	echoContent yellow "42.docker one key - lite"
 	echoContent skyBlue "---------------------------脚本管理-------------------------------"
 	echoContent yellow "0.更新脚本"
-	echoContent yellow "6.设置域名 "
-	echoContent yellow "7.设置时区：上海 "
+	echoContent yellow "5.获取外部 IP "
+	echoContent yellow "6.设置域名 Hostname"
+	echoContent yellow "7.设置时区 Asia / Shanghai "
 	echoContent yellow "8.设置随机 UUID "
 	echoContent yellow "9.状态监控 bpytop "
 	echoContent red "=================================================================="
@@ -4918,6 +4959,10 @@ function menu() {
 		updateSmartTool
 		sleep 1
 		st
+		;;
+	5)
+		clear_myHostIP
+		get_current_host_IP
 		;;
 	6)
 		clear_myHostDomain
@@ -5045,10 +5090,11 @@ function menu() {
 		;;
 	esac
 }
-SmartToolVersion=v0.38
+SmartToolVersion=v0.39
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
+get_current_host_IP
 cronRenewTLS
 menu
-# cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll
+# cd /root/git/smarttool/ && git pull && cp /root/git/smarttool/smart-tool-v5.sh ~ && cd ~ && ll && ./smart-tool-v5.sh
