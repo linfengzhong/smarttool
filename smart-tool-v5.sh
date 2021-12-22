@@ -2237,6 +2237,7 @@ function set_current_host_domain {
 function set_current_uuid {
 	print_start "设置 current UUID "
 	if [[ -f "$HOME/.myHostUUID" ]]; then
+		print_error "已经设置服务器IP，无需重复设置！"
 		currentUUID=$(cat $HOME/.myHostUUID)
 	else
 		#print_info "$HOME/.myHostUUID"
