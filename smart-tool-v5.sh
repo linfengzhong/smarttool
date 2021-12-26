@@ -34,9 +34,9 @@ function inital_smart_tool() {
 	array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
 
 	#定义变量
-	# WORKDIR="/root/git/smarttool/Docker/docker-compose/${currentHost}/"
+	# DOCKER_DIR="/root/git/smarttool/Docker/docker-compose/${currentHost}/"
 	SmartToolDir="/root/git/smarttool"
-	# WORKDIR="/etc/fuckGFW/docker/${currentHost}/"
+	# DOCKER_DIR="/etc/fuckGFW/docker/${currentHost}/"
 	# LOGDIR="/root/git/logserver/${currentHost}/"
 	GITHUB_REPO_TOOLBOX="/root/git/smarttool"
 	GITHUB_REPO_LOGSERVER="/root/git/logserver"
@@ -554,7 +554,7 @@ function execBpytop() {
 function docker_compose_down () {
 	print_start "Shutdown Docker Compose "
 	print_info "关闭 Docker Compose VM "
-	cd $WORKDIR
+	cd $DOCKER_DIR
 	docker-compose down
 	print_complete "关闭 Docker Compose VM "
 }
@@ -563,7 +563,7 @@ function docker_compose_down () {
 #-----------------------------------------------------------------------------#
 function docker_compose_up () {
 	print_start "启动 Docker Compose "
-	cd $WORKDIR
+	cd $DOCKER_DIR
 	docker-compose build
 	docker-compose up -d
 	print_complete "启动 Docker Compose "
@@ -987,28 +987,56 @@ function updateSmartTool() {
 # 初始化安装目录
 #-----------------------------------------------------------------------------#
 function initial_directory() {
+
+	# 主目录
 	mkdir -p /etc/smart-tool
 
+	# Docker虚拟机目录
 	mkdir -p /etc/fuckGFW/docker/${currentHost}
+
+	# 伪装网站目录
 	mkdir -p /etc/fuckGFW/website/html
+
+	# TLS证书目录
 	mkdir -p /etc/fuckGFW/tls
+
+	# Nginx 配置文件目录
+	mkdir -p /etc/fuckGFW/nginx/conf.d
+
+	# v2ray 配置文件目录
+	mkdir -p /etc/fuckGFW/v2ray/
+
+	# xray 配置文件目录
+	mkdir -p /etc/fuckGFW/xray/${currentHost}
+	mkdir -p /etc/fuckGFW/xray/conf
+
+	# trojan-go 配置文件目录
+	mkdir -p /etc/fuckGFW/trojan-go/
+	mkdir -p /etc/fuckGFW/standalone/trojan-go
+
+	# Clash 配置文件目录
+	mkdir -p /etc/fuckGFW/clash
+
+	# Prometheus 配置文件目录
+	mkdir -p /etc/fuckGFW/prometheus/groups
+	mkdir -p /etc/fuckGFW/prometheus/rules
+
+	# Grafana 配置文件目录
+	mkdir -p /etc/fuckGFW/grafana/
+
+	# Webmin 配置文件目录
+	mkdir -p /etc/fuckGFW/webmin/
+
+	# Nagios 配置文件目录
+	mkdir -p /etc/fuckGFW/nagios
+
 #	mkdir -p /etc/fuckGFW/mtg
 #	mkdir -p /etc/fuckGFW/subscribe
 #	mkdir -p /etc/fuckGFW/subscribe_tmp
-	mkdir -p /etc/fuckGFW/nginx/conf.d
-	mkdir -p /etc/fuckGFW/v2ray/
-	mkdir -p /etc/fuckGFW/xray/${currentHost}
-	mkdir -p /etc/fuckGFW/xray/conf
-	mkdir -p /etc/fuckGFW/trojan-go/
-	mkdir -p /etc/fuckGFW/prometheus/groups
-	mkdir -p /etc/fuckGFW/prometheus/rules
-	mkdir -p /etc/fuckGFW/grafana/
-	mkdir -p /etc/fuckGFW/webmin/
-	mkdir -p /etc/fuckGFW/clash
-	mkdir -p /etc/fuckGFW/standalone/trojan-go
-	mkdir -p /etc/fuckGFW/nagios
 #	mkdir -p /etc/systemd/system/
 #	mkdir -p /tmp/fuckGFW-tls/
+
+
 }
 #-----------------------------------------------------------------------------#
 # Show IP
@@ -2228,7 +2256,7 @@ function set_current_host_domain {
 			fi
 		currentHost=$(cat $HOME/.myHostDomain)
 	fi
-	WORKDIR="/etc/fuckGFW/docker/${currentHost}/"
+	DOCKER_DIR="/etc/fuckGFW/docker/${currentHost}/"
 	LOGDIR="/root/git/logserver/${currentHost}/"
 	print_complete "设置 current Host Domain "
 
