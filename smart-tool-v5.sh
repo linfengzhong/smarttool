@@ -4109,28 +4109,52 @@ function install_nagios_nrpe {
 #-----------------------------------------------------------------------------#
 function install_nagios_ncpa {
 	print_start "安装 Nagios NCPA "
+
 	ncpa_status_running=$(systemctl status ncpa_listener.service | grep Active | awk '{print $3}' | cut -d "(" -f2 | cut -d ")" -f1)
 	if [ "$ncpa_status_running" == "running" ]  
-        then  
-            print_info "NCPA 服务正在运行！" 
+		then  
+			print_info "NCPA 服务正在运行！" 
 			print_error "无需重新安装！"
 		else
 
-	# Nagios Cross-Platform Agent
-	print_info "Installing the Nagios Repository"
-	rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Redhat / CentOS / Rocky Linux version"
 
-	print_info "Installing NCPA"
-	yum install ncpa -y
+			# Nagios Cross-Platform Agent
+			print_info "Installing the Nagios Repository"
+			rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-1.el8.noarch.rpm
 
-	print_info "展示 NCPA 配置文件 /usr/local/ncpa/etc/ncpa.cfg"
-	cat /usr/local/ncpa/etc/ncpa.cfg
-	rm -f /usr/bin/python
-	ln -s /usr/bin/python3 /usr/bin/python >/dev/null 2>&1
-	print_info "访问 https://${currentHost}:5693/"
+			print_info "Installing NCPA"
+			yum install ncpa -y
 
+			print_info "展示 NCPA 配置文件 /usr/local/ncpa/etc/ncpa.cfg"
+			cat /usr/local/ncpa/etc/ncpa.cfg
+			rm -f /usr/bin/python
+			ln -s /usr/bin/python3 /usr/bin/python >/dev/null 2>&1
+			print_info "访问 https://${currentHost}:5693/"
+
+		fi
+
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			print_info "Debian / Ubuntu / Armbian version"
+
+			## Installation of Nagios Repo
+			# Add to the apt sources list
+			apt -y install apt-transport-https
+			echo "deb https://repo.nagios.com/deb/$(lsb_release -cs) /" > /etc/apt/sources.list.d/nagios.list
+
+			# Add our public GPG key
+			wget -qO - https://repo.nagios.com/GPG-KEY-NAGIOS-V2 | apt-key add -
+
+			# Update your repositories
+			apt update
+
+			## Installation and Upgrade of NCPA
+			apt -y install ncpa
+		fi
 	fi
 	print_complete "安装 Nagios NCPA "
+
 }
 #-----------------------------------------------------------------------------#
 # 卸载 nagios ncpa
