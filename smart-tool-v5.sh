@@ -3345,12 +3345,12 @@ define command {
 
 define command {
     command_name    check_certificate_expires
-    command_line    \$USER1\$/check_tcp -H \$HOSTADDRESS$ -p 443 -w 0.5 -c 1 -t 5 -S -D 30
+    command_line    \$USER1\$/check_tcp -H \$HOSTADDRESS$ -p 443 -w 1 -c 1 -t 5 -S -D 3
 }
 
 define command {
     command_name    check_ssl_certificate
-    command_line    \$USER1\$/check_ssl_certificate -H \$HOSTADDRESS$ -c 10 -w 20
+    command_line    \$USER1\$/check_ssl_certificate -H \$HOSTADDRESS$ -c 1 -w 3
 }
 
 define command {
@@ -3396,6 +3396,11 @@ define command {
 define command {
     command_name    check_port_9100
     command_line    \$USER1\$/check_tcp -H \$HOSTADDRESS$ -p 9100 -w 0.2 -c 0.5 -t 5
+}
+
+define command {
+    command_name    check_port_9443
+    command_line    \$USER1\$/check_tcp -H \$HOSTADDRESS$ -p 9443 -w 0.2 -c 0.5 -t 5
 }
 
 define command {
