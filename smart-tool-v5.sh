@@ -400,6 +400,11 @@ function uninstall_docker_and_docker_compose () {
 	print_info "Uninstall docker compose"
 	rm -f /usr/local/bin/docker-compose
 
+	print_info "Disable docker.service"
+	systemctl stop docker.service
+	systemctl disable docker.service
+	systemctl daemon-reload
+
 	print_complete "卸载 docker CE & docker compose "
 }
 #-----------------------------------------------------------------------------#
