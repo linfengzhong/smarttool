@@ -4180,7 +4180,21 @@ function install_nagios_plugins {
 			make install
 			systemctl restart nagios.service
 			print_complete "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
-		fi		
+		fi
+
+		# Possible Solution #1
+		# If Python 3 is not installed, install it: 
+		apt -y install python3
+		# Possible Solution #2
+		# If Python 3 has been installed, run these commands: 
+		whereis python3
+		# Then we create a symlink to it: 
+		ln -s /usr/bin/python3.9 /usr/bin/python
+		# PING
+		chmod +s /bin/ping
+		# get check_ncpa.py
+		wget --no-check-certificate -O /usr/local/nagios/libexec/check_ncpa.py https://github.com/linfengzhong/toolbox/blob/main/Nagios/Libexec/check_ncpa.py
+		chmod 755 /usr/local/nagios/libexec/check_ncpa.py
 	fi
 	print_complete "安装 Nagios Plugins 2.4.0"
 }
