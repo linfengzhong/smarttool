@@ -4111,49 +4111,78 @@ function install_nagios_server {
 # 安装 nagios plugins
 #-----------------------------------------------------------------------------#
 function install_nagios_plugins {
-	print_start "安装 Nagios Plugins 2.3.3"
+	print_start "安装 Nagios Plugins 2.4.0"
 	if [[ -f "/usr/local/nagios/libexec/check_cpu_stats.sh" ]]; then
         print_info "Nagios Plugins 服务正在运行！" 
 		print_error "无需重复安装！"
 	else
 	# 2021-April-06 [Initial Version] - Shell Script for Nagios Plugins installing
 	# Nagios Plugins - Installing Nagios Plugins From Source
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Redhat / CentOS / Rocky Linux version"
+			# Security-Enhanced Linux
+			# This guide is based on SELinux being disabled or in permissive mode. 
+			# Steps to do this are as follows.
+			print_info "Step 1: Security-Enhanced Linux"
+			sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+			setenforce 0
+			# print_complete "Step 1: Security-Enhanced Linux"
 
-	# Security-Enhanced Linux
-	# This guide is based on SELinux being disabled or in permissive mode. 
-	# Steps to do this are as follows.
-	print_info "Step 1: Security-Enhanced Linux"
-	sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-	setenforce 0
-	# print_complete "Step 1: Security-Enhanced Linux"
+			# Prerequisites
+			# Perform these steps to install the pre-requisite packages.
+			print_info "Step 2: Prerequisites"
+			sleep 2
+			yum install -y gcc glibc glibc-common make gettext automake autoconf wget openssl-devel net-snmp net-snmp-utils epel-release
+			yum --enablerepo=PowerTools,epel install perl-Net-SNMP
+			yum -y install sysstat
+			print_complete "Step 2: Prerequisites"
 
-	# Prerequisites
-	# Perform these steps to install the pre-requisite packages.
-	print_info "Step 2: Prerequisites"
-	sleep 2
-	yum install -y gcc glibc glibc-common make gettext automake autoconf wget openssl-devel net-snmp net-snmp-utils epel-release
-	yum --enablerepo=PowerTools,epel install perl-Net-SNMP
-	yum -y install sysstat
-	print_complete "Step 2: Prerequisites"
+			# Downloading the Source
+			print_info "Step 3: 下载Nagios Plugins 2.4.0 到tmp文件夹"
+			cd /tmp
+			wget --no-check-certificate https://github.com/nagios-plugins/nagios-plugins/releases/download/release-2.4.0/nagios-plugins-2.4.0.tar.gz
+			tar xzf nagios-plugins-2.4.0.tar.gz
+			cd nagios-plugins-2.4.0
+			print_complete "Step 3: 下载Nagios Plugins 2.4.0 到tmp文件夹"
 
-	# Downloading the Source
-	print_info "Step 3: 下载Nagios Plugins 2.2.3 到tmp文件夹"
-	cd /tmp
-	wget --no-check-certificate https://github.com/nagios-plugins/nagios-plugins/releases/download/release-2.3.3/nagios-plugins-2.3.3.tar.gz
-	tar xzf nagios-plugins-2.3.3.tar.gz
-	cd nagios-plugins-2.3.3
-	print_complete "Step 3: 下载Nagios Plugins 2.2.3 到tmp文件夹"
+			# Nagios Plugins Installation
+			print_info "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
+			./tools/setup
+			./configure
+			make
+			make install
+			systemctl restart nrpe
+			print_complete "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
+		fi
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			print_info "Debian / Ubuntu / Armbian version"
 
-	# Nagios Plugins Installation
-	print_info "Step 4: 安装nagios plugins, 并重新启动nrpe服务"
-	./tools/setup
-	./configure
-	make
-	make install
-	systemctl restart nrpe
-	print_complete "Step 4: 安装nagios plugins, 并重新启动nrpe服务"
+			# Prerequisites
+			# Perform these steps to install the pre-requisite packages.
+			print_info "Step 2: Prerequisites"
+			apt -y install autoconf automake gcc libc6 libmcrypt-dev make libssl-dev wget bc gawk dc build-essential snmp libnet-snmp-perl gettext
+			print_complete "Step 2: Prerequisites"
+
+			# Downloading the Source
+			print_info "Step 3: 下载Nagios Plugins 2.4.0 到tmp文件夹"
+			cd /tmp
+			#cp ~/nagios-plugins-2.4.0.tar.gz /tmp/
+			wget --no-check-certificate -O nagios-plugins-2.4.0.tar.gz https://github.com/nagios-plugins/nagios-plugins/archive/release-2.4.0.tar.gz
+			tar zxf nagios-plugins-2.4.0.tar.gz
+			print_complete "Step 3: 下载Nagios Plugins 2.4.0 到tmp文件夹"
+
+			# Nagios Plugins Installation
+			print_info "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
+			cd /tmp/nagios-plugins-2.4.0/
+			./tools/setup
+			./configure
+			make
+			make install
+			systemctl restart nagios.service
+			print_complete "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
+		fi		
 	fi
-	print_complete "安装 Nagios Plugins 2.3.3"
+	print_complete "安装 Nagios Plugins 2.4.0"
 }
 #-----------------------------------------------------------------------------#
 # 安装 nagios nrpe
