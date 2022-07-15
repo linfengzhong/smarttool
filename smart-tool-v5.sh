@@ -1732,7 +1732,7 @@ services:
         environment: 
             TZ: Asia/Shanghai
         expose: 
-            - 9100
+            - 9100:9100
         command:
            - '--path.rootfs=/host'
         network_mode: host
@@ -1742,6 +1742,23 @@ services:
           - '/:/host:ro,rslave'
     #8. grafana -> monitor UI
     #9. Portainer -> Docker UI
+    #--> Working
+    portainer:
+        image: portainer/portainer-ce:alpine
+        container_name: portainer
+        restart: always
+        environment: 
+            TZ: Asia/Shanghai
+        expose: 
+            - 8000:8000
+            - 9000:9000
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            # 持久化配置文件
+            # Store data on logserver
+            #- /root/git/logserver/${currentHost}/portainer/data:/data
+        networks: 
+            - net
 networks: 
     net:
         driver: bridge
