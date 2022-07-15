@@ -1709,7 +1709,7 @@ services:
     #5. cadvisor -> container advisor / monitor  
     #--> Working      
     cadvisor:
-        image: google/cadvisor:latest
+        image: zcube/cadvisor:latest
         container_name: ${currentHost}_cadvisor
         restart: always
         environment: 
