@@ -4196,57 +4196,61 @@ function install_nagios_nrpe {
             print_info "NRPE 服务正在运行！" 
 			print_error "无需重新安装！"
 		else
-	#*** Configuration summary for nrpe 4.0.3 2020-04-28 ***:
-	#
-	# General Options:
-	# -------------------------
-	# NRPE port:    5666
-	# NRPE user:    nagios
-	# NRPE group:   nagios
-	# Nagios user:  nagios
-	# Nagios group: nagios
 
-	#Security-Enhanced Linux
-	#This guide is based on SELinux being disabled or in permissive mode. Steps to do this are as follows.
-	print_info "Step 1: SELINUX Disable"
-	sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-	setenforce 0
-	# print_complete "Step 1: SELINUX Disable"
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Redhat / CentOS / Rocky Linux version"
+			#*** Configuration summary for nrpe 4.0.3 2020-04-28 ***:
+			#
+			# General Options:
+			# -------------------------
+			# NRPE port:    5666
+			# NRPE user:    nagios
+			# NRPE group:   nagios
+			# Nagios user:  nagios
+			# Nagios group: nagios
 
-	#Prerequisites
-	#Perform these steps to install the pre-requisite packages.
-	print_info "Step 2: Prerequisites"
-	yum install -y gcc glibc glibc-common make gettext automake autoconf wget openssl-devel net-snmp net-snmp-utils epel-release
-	# yum --enablerepo=PowerTools,epel install perl-Net-SNMP
-	print_complete "Step 2: Prerequisites"
+			#Security-Enhanced Linux
+			#This guide is based on SELinux being disabled or in permissive mode. Steps to do this are as follows.
+			print_info "Step 1: SELINUX Disable"
+			sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+			setenforce 0
+			# print_complete "Step 1: SELINUX Disable"
 
-	#Download NRPE package
-	#下载NRPE包
-	print_info "Step 3: 下载nrpe-4.0.3到tmp文件夹"
-	cd /tmp
-	wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.0.3/nrpe-4.0.3.tar.gz
-	tar xzf nrpe-4.0.3.tar.gz
-	cd nrpe-4.0.3
-	print_complete "Step 3: 下载nrpe-4.0.3到tmp文件夹"
+			#Prerequisites
+			#Perform these steps to install the pre-requisite packages.
+			print_info "Step 2: Prerequisites"
+			yum install -y gcc glibc glibc-common make gettext automake autoconf wget openssl-devel net-snmp net-snmp-utils epel-release
+			# yum --enablerepo=PowerTools,epel install perl-Net-SNMP
+			print_complete "Step 2: Prerequisites"
 
-	#NPRE Installation
-	print_info "Step 4: 安装nrpe，设置用户和用户组、并初始化和启动nrpe服务"
-	./configure
-	make all
-	make install-groups-users
-	make install
-	make install-config
-	make install-init
-	systemctl enable nrpe 
-	systemctl start nrpe
-	print_complete "Step 4: 安装nrpe，设置用户和用户组、并初始化和启动nrpe服务"
+			#Download NRPE package
+			#下载NRPE包
+			print_info "Step 3: 下载nrpe-4.0.3到tmp文件夹"
+			cd /tmp
+			wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.0.3/nrpe-4.0.3.tar.gz
+			tar xzf nrpe-4.0.3.tar.gz
+			cd nrpe-4.0.3
+			print_complete "Step 3: 下载nrpe-4.0.3到tmp文件夹"
 
-	#firewall enable port 5666
-	#===== RHEL 7/8 | CentOS 7/8 | Oracle Linux 7/8 =====
-	print_info "Step 5: 设置防火墙开启端口 5666"
-	firewall-cmd --zone=public --add-port=5666/tcp
-	firewall-cmd --zone=public --add-port=5666/tcp --permanent
-	print_complete "Step 5: 设置防火墙开启端口 5666"
+			#NPRE Installation
+			print_info "Step 4: 安装nrpe，设置用户和用户组、并初始化和启动nrpe服务"
+			./configure
+			make all
+			make install-groups-users
+			make install
+			make install-config
+			make install-init
+			systemctl enable nrpe 
+			systemctl start nrpe
+			print_complete "Step 4: 安装nrpe，设置用户和用户组、并初始化和启动nrpe服务"
+
+			#firewall enable port 5666
+			#===== RHEL 7/8 | CentOS 7/8 | Oracle Linux 7/8 =====
+			print_info "Step 5: 设置防火墙开启端口 5666"
+			firewall-cmd --zone=public --add-port=5666/tcp
+			firewall-cmd --zone=public --add-port=5666/tcp --permanent
+			print_complete "Step 5: 设置防火墙开启端口 5666"
+		fi
 	fi
 	print_complete "安装 Nagios NRPE"
 }
