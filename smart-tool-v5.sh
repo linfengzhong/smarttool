@@ -374,9 +374,9 @@ function install_docker_compose () {
 	if [[ -f "/usr/local/bin/docker-compose" ]]; then
 		print_error "docker compose已经安装，无需重复操作！"
 	else
-		print_info "docker-compose v2.2.2"
-		# https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-aarch64
-		curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
+		print_info "docker-compose v2.6.1"
+		# https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-linux-aarch64
+		curl -L "https://github.com/docker/compose/releases/download/v2.6.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose >/dev/null 2>&1
 		chmod +x /usr/local/bin/docker-compose >/dev/null 2>&1
 		rm -f /usr/bin/docker-compose
 		ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose >/dev/null 2>&1
