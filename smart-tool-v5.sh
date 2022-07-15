@@ -4193,7 +4193,7 @@ function install_nagios_plugins {
 		# PING
 		chmod +s /bin/ping
 		# get check_ncpa.py
-		wget --no-check-certificate -O /usr/local/nagios/libexec/check_ncpa.py https://github.com/linfengzhong/toolbox/blob/main/Nagios/Libexec/check_ncpa.py
+		wget --no-check-certificate -O /usr/local/nagios/libexec/check_ncpa.py https://raw.githubusercontent.com/linfengzhong/toolbox/main/Nagios/Libexec/check_ncpa.py
 		chmod 755 /usr/local/nagios/libexec/check_ncpa.py
 	fi
 	print_complete "安装 Nagios Plugins 2.4.0"
@@ -5336,7 +5336,7 @@ function menu() {
 		;;
 	esac
 }
-SmartToolVersion=v0.40
+SmartToolVersion=v0.41
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
