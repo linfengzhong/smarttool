@@ -4173,7 +4173,7 @@ function install_nagios_plugins {
 
 			# Nagios Plugins Installation
 			print_info "Step 4: 安装nagios plugins, 并重新启动Nagios服务"
-			cd /tmp/nagios-plugins-2.4.0/
+			cd /tmp/nagios-plugins-release-2.4.0/
 			./tools/setup
 			./configure
 			make
