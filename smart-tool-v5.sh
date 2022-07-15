@@ -356,7 +356,7 @@ function install_docker () {
   $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 			print_complete "2/3 Set up GPG Key & repository for Docker "
 		fi
-		
+		sudo apt update > /dev/null
 		print_info "安装进行中ing "
 		$installType docker-ce docker-ce-cli containerd.io
 		#systemctl start docker
@@ -3889,112 +3889,221 @@ function install_nagios_server {
             print_info "Nagios 服务正在运行！" 
 			print_error "无需重新安装！"
 		else
-	# Security-Enhanced Linux
-	# This guide is based on SELinux being disabled or in permissive mode. 
-	# Steps to do this are as follows.
-	print_info "Step 1: Security-Enhanced Linux"
-	sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
-	setenforce 0
-	# print_complete "Step 1: Security-Enhanced Linux"
 
-	# Prerequisites
-	# Perform these steps to install the pre-requisite packages.
-	# httpd -> Apache Web Server
-	print_info "Step 2: Prerequisites"
-	yum install -y gcc glibc glibc-common perl httpd php wget gd gd-devel
-	yum update -y
-	print_complete "Step 2: Prerequisites"
+		if [[ "$release" = "redhat" || "$release" = "centos" || "$release" = "rocky" ]] ; then
+			print_info "Redhat / CentOS / Rocky Linux version"
+			# Security-Enhanced Linux
+			# This guide is based on SELinux being disabled or in permissive mode. 
+			# Steps to do this are as follows.
+			print_info "Step 1: Security-Enhanced Linux"
+			sed -i 's/SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+			setenforce 0
+			# print_complete "Step 1: Security-Enhanced Linux"
 
-	# Downloading the Source
-	print_info "Step 3: Downloading the Source"
-	print_info "nagios-4.4.6."
-	cd /tmp
-	wget -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
-	tar xzf nagioscore.tar.gz
-	print_complete "Step 3: Downloading the Source"
-	
-	# Compile
-	print_info "Step 4: Compile"
-	cd /tmp/nagios-4.4.6/
-	./configure
-	make all
-	print_complete "Step 4: Compile"
+			# Prerequisites
+			# Perform these steps to install the pre-requisite packages.
+			# httpd -> Apache Web Server
+			print_info "Step 2: Prerequisites"
+			yum install -y gcc glibc glibc-common perl httpd php wget gd gd-devel
+			yum update -y
+			print_complete "Step 2: Prerequisites"
 
-	# Create User And Group
-	# This creates the nagios user and group. 
-	# The apache user is also added to the nagios group.
-	print_info "Step 5: Create User And Group"
-	make install-groups-users
-	usermod -a -G nagios apache
-	print_complete "Step 5: Create User And Group"
+			# Downloading the Source
+			print_info "Step 3: Downloading the Source"
+			print_info "nagios-4.4.6."
+			cd /tmp
+			wget -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/releases/download/nagios-4.4.6/nagios-4.4.6.tar.gz
+			tar xzf nagioscore.tar.gz
+			print_complete "Step 3: Downloading the Source"
+			
+			# Compile
+			print_info "Step 4: Compile"
+			cd /tmp/nagios-4.4.6/
+			./configure
+			make all
+			print_complete "Step 4: Compile"
 
-	# Install Binaries
-	# This step installs the binary files, CGIs, and HTML files.
-	print_info "Step 6: Install Binaries"
-	make install
-	print_complete "Step 6: Install Binaries"
+			# Create User And Group
+			# This creates the nagios user and group. 
+			# The apache user is also added to the nagios group.
+			print_info "Step 5: Create User And Group"
+			make install-groups-users
+			usermod -a -G nagios apache
+			print_complete "Step 5: Create User And Group"
 
-	# Install Service / Daemon
-	# This installs the service or daemon files and also configures them to start on boot. 
-	# The Apache httpd service is also configured at this point.
-	print_info "Step 7: Install Service / Daemon"
-	make install-daemoninit
-	systemctl enable httpd.service
-	print_complete "Step 7: Install Service / Daemon"
+			# Install Binaries
+			# This step installs the binary files, CGIs, and HTML files.
+			print_info "Step 6: Install Binaries"
+			make install
+			print_complete "Step 6: Install Binaries"
 
-	# Install Command Mode
-	# This installs and configures the external command file.
-	print_info "Step 8: Install Command Mode"
-	make install-commandmode
-	print_complete "Step 8: Install Command Mode"
+			# Install Service / Daemon
+			# This installs the service or daemon files and also configures them to start on boot. 
+			# The Apache httpd service is also configured at this point.
+			print_info "Step 7: Install Service / Daemon"
+			make install-daemoninit
+			systemctl enable httpd.service
+			print_complete "Step 7: Install Service / Daemon"
 
-	# Install Configuration Files
-	# This installs the *SAMPLE* configuration files. 
-	# These are required as Nagios needs some configuration files to allow it to start.
-	print_info "Step 9: Install Configuration Files"
-	make install-config
-	print_complete "Step 9: Install Configuration Files"
+			# Install Command Mode
+			# This installs and configures the external command file.
+			print_info "Step 8: Install Command Mode"
+			make install-commandmode
+			print_complete "Step 8: Install Command Mode"
 
-	# Install Apache Config Files
-	# This installs the Apache web server configuration files. 
-	# Also configure Apache settings if required.
-	print_info "Step 10: Install Apache Config Files"
-	make install-webconf
-	print_complete "Step 10: Install Apache Config Files"
+			# Install Configuration Files
+			# This installs the *SAMPLE* configuration files. 
+			# These are required as Nagios needs some configuration files to allow it to start.
+			print_info "Step 9: Install Configuration Files"
+			make install-config
+			print_complete "Step 9: Install Configuration Files"
 
-	# Configure Firewall
-	# You need to allow port 80 inbound traffic on the local firewall 
-	# so you can reach the Nagios Core web interface.
-	print_info "Step 11: Configure Firewall"
-	firewall-cmd --zone=public --add-port=8080/tcp
-	firewall-cmd --zone=public --add-port=8080/tcp --permanent
-	print_complete "Step 11: Configure Firewall"
+			# Install Apache Config Files
+			# This installs the Apache web server configuration files. 
+			# Also configure Apache settings if required.
+			print_info "Step 10: Install Apache Config Files"
+			make install-webconf
+			print_complete "Step 10: Install Apache Config Files"
 
-	# Create nagiosadmin User Account
-	# You'll need to create an Apache user account to be able to log into Nagios.
-	# The following command will create a user account called nagiosadmin and 
-	# you will be prompted to provide a password for the account.
-	print_info "Step 12: Create nagiosadmin User Account"
-	htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
-	print_complete "Step 12: Create nagiosadmin User Account"
+			# Configure Firewall
+			# You need to allow port 80 inbound traffic on the local firewall 
+			# so you can reach the Nagios Core web interface.
+			print_info "Step 11: Configure Firewall"
+			firewall-cmd --zone=public --add-port=8080/tcp
+			firewall-cmd --zone=public --add-port=8080/tcp --permanent
+			print_complete "Step 11: Configure Firewall"
 
-	# Start Apache Web Server
-	print_info "Step 13: Start Apache Web Server"
-	systemctl start httpd.service
-	print_complete "Step 13: Start Apache Web Server"
+			# Create nagiosadmin User Account
+			# You'll need to create an Apache user account to be able to log into Nagios.
+			# The following command will create a user account called nagiosadmin and 
+			# you will be prompted to provide a password for the account.
+			print_info "Step 12: Create nagiosadmin User Account"
+			htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+			print_complete "Step 12: Create nagiosadmin User Account"
 
-	# Start Service / Daemon
-	# This command starts Nagios Core.
-	print_info "Step 14: Start Service / Daemon for Nagios Core"
-	systemctl start nagios.service
-	print_complete "Step 14: Start Service / Daemon for Nagios Core"
+			# Start Apache Web Server
+			print_info "Step 13: Start Apache Web Server"
+			systemctl start httpd.service
+			print_complete "Step 13: Start Apache Web Server"
 
-	# Test Nagios
-	# Nagios is now running, to confirm this you need to log into the Nagios Web Interface.
-	# Point your web browser to the ip address or FQDN of your Nagios Core server, 
-	# for example:
-	# http://10.25.5.143/nagios
-	# http://core-013.domain.local/nagios
+			# Start Service / Daemon
+			# This command starts Nagios Core.
+			print_info "Step 14: Start Service / Daemon for Nagios Core"
+			systemctl start nagios.service
+			print_complete "Step 14: Start Service / Daemon for Nagios Core"
+
+			# Test Nagios
+			# Nagios is now running, to confirm this you need to log into the Nagios Web Interface.
+			# Point your web browser to the ip address or FQDN of your Nagios Core server, 
+			# for example:
+			# http://10.25.5.143/nagios
+			# http://core-013.domain.local/nagios
+		fi
+
+		if [[ "$release" = "debian" || "$release" = "ubuntu" || "$release" = "armbian" ]] ; then
+			print_info "Debian / Ubuntu / Armbian version"
+			print_info "Step 1: Security-Enhanced Linux"
+			dpkg -l selinux*
+			print_complete "Step 1: Security-Enhanced Linux"
+
+			print_info "Step 2: Prerequisites"
+			apt update
+			apt -y install autoconf gcc libc6 make wget unzip apache2 apache2-utils php libgd-dev
+			print_complete "Step 2: Prerequisites"
+
+			print_info "Step 3: Downloading the Source"
+			print_info "nagios-4.4.7."
+			cd /tmp
+			wget -O nagioscore.tar.gz https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.7.tar.gz
+			tar xzf nagioscore.tar.gz
+			print_complete "Step 3: Downloading the Source"
+
+			# Compile
+			print_info "Step 4: Compile"
+			cd /tmp/nagioscore-nagios-4.4.7/
+			./configure --with-httpd-conf=/etc/apache2/sites-enabled
+			make all
+			print_complete "Step 4: Compile"
+
+			# Create User And Group
+			# This creates the nagios user and group. 
+			# The apache user is also added to the nagios group.
+			print_info "Step 5: Create User And Group"
+			make install-groups-users
+			usermod -a -G nagios www-data
+			print_complete "Step 5: Create User And Group"
+
+			# Install Binaries
+			# This step installs the binary files, CGIs, and HTML files.
+			print_info "Step 6: Install Binaries"
+			make install
+			print_complete "Step 6: Install Binaries"
+
+			# Install Service / Daemon
+			# This installs the service or daemon files and also configures them to start on boot. 
+			# The Apache httpd service is also configured at this point.
+			print_info "Step 7: Install Service / Daemon"
+			make install-daemoninit
+			#systemctl enable httpd.service
+			print_complete "Step 7: Install Service / Daemon"
+
+			# Install Command Mode
+			# This installs and configures the external command file.
+			print_info "Step 8: Install Command Mode"
+			make install-commandmode
+			print_complete "Step 8: Install Command Mode"
+
+			# Install Configuration Files
+			# This installs the *SAMPLE* configuration files. 
+			# These are required as Nagios needs some configuration files to allow it to start.
+			print_info "Step 9: Install Configuration Files"
+			make install-config
+			print_complete "Step 9: Install Configuration Files"
+
+			# Install Apache Config Files
+			# This installs the Apache web server configuration files. 
+			# Also configure Apache settings if required.
+			print_info "Step 10: Install Apache Config Files"
+			make install-webconf
+			a2enmod rewrite
+			a2enmod cgi
+			print_complete "Step 10: Install Apache Config Files"
+
+			# Configure Firewall
+			# You need to allow port 80 inbound traffic on the local firewall 
+			# so you can reach the Nagios Core web interface.
+			print_info "Step 11: Configure Firewall"
+			iptables -I INPUT -p tcp --destination-port 80 -j ACCEPT
+			apt -y install iptables-persistent
+			print_complete "Step 11: Configure Firewall"
+
+			# Create nagiosadmin User Account
+			# You'll need to create an Apache user account to be able to log into Nagios.
+			# The following command will create a user account called nagiosadmin and 
+			# you will be prompted to provide a password for the account.
+			print_info "Step 12: Create nagiosadmin User Account"
+			htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+			print_complete "Step 12: Create nagiosadmin User Account"
+
+			# Start Apache Web Server
+			print_info "Step 13: Start Apache Web Server"
+			systemctl start apache2.service
+			print_complete "Step 13: Start Apache Web Server"
+
+			# Start Service / Daemon
+			# This command starts Nagios Core.
+			print_info "Step 14: Start Service / Daemon for Nagios Core"
+			systemctl start nagios.service
+			print_complete "Step 14: Start Service / Daemon for Nagios Core"
+
+			# Test Nagios
+			# Nagios is now running, to confirm this you need to log into the Nagios Web Interface.
+			# Point your web browser to the ip address or FQDN of your Nagios Core server, 
+			# for example:
+			# http://10.25.5.143/nagios
+			# http://core-013.domain.local/nagios
+
+		fi
 	fi
 	print_complete "安装 Nagios Core"
 }
