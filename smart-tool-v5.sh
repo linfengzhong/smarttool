@@ -1740,6 +1740,8 @@ services:
         restart: unless-stopped
         volumes:
           - '/:/host:ro,rslave'
+        networks: 
+            - net
     #8. grafana -> monitor UI
     #9. Portainer -> Docker UI
     #--> Working
