@@ -588,7 +588,7 @@ function docker_images () {
 #-----------------------------------------------------------------------------#
 function docker_container_ps () {
 	print_info "列出所有运行的docker container "
-	docker container ps
+	docker container ps -a
 }
 #-----------------------------------------------------------------------------#
 # Git global configuration
