@@ -2076,7 +2076,7 @@ function generate_fake_website {
 			rm -rf /etc/fuckGFW/website/html
 			randomNum=$((RANDOM%6+1))
 			#wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
-			wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip
+			wget -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip
 			unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html
 			rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 			echoContent green " ---> 添加伪装站点成功"
@@ -2084,7 +2084,7 @@ function generate_fake_website {
 	else
 		randomNum=$((RANDOM%6+1))
 		rm -rf /etc/fuckGFW/website/html
-		wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip
+		wget -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip
 		unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html
 		rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 		echoContent green " ---> 添加伪装站点成功"
