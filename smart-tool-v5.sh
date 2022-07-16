@@ -2067,6 +2067,7 @@ function generate_fake_website {
 #	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html4.zip
 #	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html5.zip
 #	https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html5.zip
+#   https://github.com/linfengzhong/smarttool/raw/main/Website/html1.zip
 	print_start "添加随机伪装站点 "
 	if [[ -d "/etc/fuckGFW/website/html" && -f "/etc/fuckGFW/website/html/check" ]]; then
 		echo
@@ -2074,7 +2075,8 @@ function generate_fake_website {
 		if [[ "${nginxBlogInstallStatus}" == "y" ]]; then
 			rm -rf /etc/fuckGFW/website/html
 			randomNum=$((RANDOM%6+1))
-			wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
+			#wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
+			wget -q -P /etc/fuckGFW/website https://github.com/linfengzhong/smarttool/raw/main/Website/html${randomNum}.zip >/dev/null
 			unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html >/dev/null
 			rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 			echoContent green " ---> 添加伪装站点成功"
@@ -2082,7 +2084,7 @@ function generate_fake_website {
 	else
 		randomNum=$((RANDOM%6+1))
 		rm -rf /etc/fuckGFW/website/html
-		wget -q -P /etc/fuckGFW/website https://raw.githubusercontent.com/linfengzhong/smarttool/main/Website/html${randomNum}.zip >/dev/null
+		wget -q -P /etc/fuckGFW/website https://github.com/linfengzhong/smarttool/raw/main/Website/html${randomNum}.zip >/dev/null
 		unzip -o /etc/fuckGFW/website/html${randomNum}.zip -d /etc/fuckGFW/website/html >/dev/null
 		rm -f /etc/fuckGFW/website/html${randomNum}.zip*
 		echoContent green " ---> 添加伪装站点成功"
