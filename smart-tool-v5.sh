@@ -1740,8 +1740,6 @@ services:
         restart: unless-stopped
         volumes:
           - '/:/host:ro,rslave'
-        networks: 
-            - net
     #8. grafana -> monitor UI
     #9. Portainer -> Docker UI
     #--> Working
@@ -5207,7 +5205,7 @@ function menu() {
 	echoContent yellow "37.show account"
 	echoContent yellow "38.安装 docker CE & docker compose"
 	echoContent yellow "39.卸载 docker CE & docker compose"
-	echoContent yellow "42.docker one key - lite"
+	echoContent yellow "44.docker one key - lite"
 	echoContent skyBlue "---------------------------证书管理-------------------------------"
 	echoContent yellow "40.CA one key "
 	echoContent yellow "41.generate CA "
@@ -5335,9 +5333,7 @@ function menu() {
 	39)
 		uninstall_docker_and_docker_compose
 		;;
-	42)
-		install_docker
-		install_docker_compose
+	44)
 		generate_docker_compose_yml_lite
 		docker_compose_down
 		docker_compose_up
@@ -5360,7 +5356,7 @@ function menu() {
 		;;
 	esac
 }
-SmartToolVersion=v0.41
+SmartToolVersion=v0.42
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
