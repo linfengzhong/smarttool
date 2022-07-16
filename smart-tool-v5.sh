@@ -1282,7 +1282,7 @@ function generate_xray_conf {
 }
 EOF
 	print_info "复制证书到xray配置文件夹 "
-	cp -pf /etc/fuckGFW/tls/*.* /etc/fuckGFW/xray/${currentHost}/
+	#cp -pf /etc/fuckGFW/tls/*.* /etc/fuckGFW/xray/${currentHost}/
 	print_complete "生成 xray 配置文件 "
 }
 #-----------------------------------------------------------------------------#
