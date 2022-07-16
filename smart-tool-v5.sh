@@ -1703,6 +1703,28 @@ function generate_docker_compose_yml_lite {
 version: '3.8'
 services:
     #1. Nginx -> proxy server
+    #--> Working
+    # listen 7080, 7443 --> Mock website https://${currentHost}
+    # proxy pass
+    # /portainer/ --> proxy_pass http://portainer:9000/;
+    nginx:
+        image: nginx:alpine
+        container_name: ${currentHost}_nginx
+        restart: always
+        environment: 
+            TZ: Asia/Shanghai
+        #expose:
+        #    - 443
+        ports:
+            - 7080:80
+        volumes: 
+            - /etc/fuckGFW/nginx/conf.d/:/etc/nginx/conf.d
+            - /etc/fuckGFW/website/html:/usr/share/nginx/html
+            # Store data on logserver
+            #- /root/git/logserver/${currentHost}/nginx/error.log:/var/log/nginx/error.log
+            #- /root/git/logserver/${currentHost}/nginx/access.log:/var/log/nginx/access.log
+        networks: 
+            - net
     #2. trojan go -> fuck GFW
     #3. xray -> fuck GFW * Proxy Server
     #4. v2ray -> fuck GFW * Proxy Server
@@ -5333,11 +5355,6 @@ function menu() {
 	39)
 		uninstall_docker_and_docker_compose
 		;;
-	44)
-		generate_docker_compose_yml_lite
-		docker_compose_down
-		docker_compose_up
-		;;
 	40)
 		install_acme
 		renewalTLS
@@ -5350,13 +5367,18 @@ function menu() {
 		sleep 3
 		st
 		;;
+	44)
+		generate_docker_compose_yml_lite
+		docker_compose_down
+		docker_compose_up
+		;;
 	*)
 		print_error "请输入正确的数字"
 #		menu "$@"
 		;;
 	esac
 }
-SmartToolVersion=v0.42
+SmartToolVersion=v0.43
 cleanScreen
 inital_smart_tool $1
 set_current_host_domain
