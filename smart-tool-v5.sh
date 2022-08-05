@@ -33,8 +33,8 @@ function inital_smart_tool() {
 	#array_service_description=("Network sent" "Network receive" "CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service webmin" "Service nrpe" "Service ncpa" "HTTP" "Certificate" "TCP 443 nginx xray" "TCP 5666 nrpe" "TCP 5693 ncpa" "TCP 9100 node exporter" "TCP 9999 webmin" "Service node exporter" "Total process" )
 	#array_check_command=("check_ncpa_interface_sent" "check_ncpa_interface_receive" "check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_webmin" "check_ncpa_service_nrpe" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_port_443" "check_port_5666" "check_port_5693" "check_port_9100" "check_port_9999" "check_ncpa_service_node_exporter" "check_ncpa_processes")
 
-	array_service_description=("CPU" "Disk" "Memory" "SSH" "Service xray" "Service nginx" "Service ncpa" "HTTP" "SSL" "Total process" )
-	array_check_command=("check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_ncpa_processes")
+	array_service_description=("CPU" "Disk" "Memory" "Port: 443" "Port: 8443" "Port: 9443" "SSH" "Service xray" "Service nginx" "Service ncpa" "HTTP" "SSL" "Total process" )
+	array_check_command=("check_ncpa_cpu" "check_ncpa_disk" "check_ncpa_memory" "check_port_443" "check_port_8443" "check_port_9443" "check_ssh" "check_ncpa_service_xray" "check_ncpa_service_nginx" "check_ncpa_service_ncpa_listener" "check_http" "check_certificate_expires" "check_ncpa_processes")
 
 	#定义变量
 	# DOCKER_DIR="/root/git/smarttool/Docker/docker-compose/${currentHost}/"
